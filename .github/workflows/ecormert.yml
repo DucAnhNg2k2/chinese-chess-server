@@ -1,0 +1,43 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: |
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test # This job depends on "test" having finished
+    steps:
+      - name: Deploying to Digitalocean droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/chinese-chess-server
+            git pull
+            docker-compose down
+            docker container prune -f
+            docker rmi nestjs-app-cicd:latest
+            docker image prune -f
+            docker-compose build
+            docker-compose up -d
+            docker-compose logs --tail 10

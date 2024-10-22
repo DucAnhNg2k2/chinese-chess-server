@@ -1,15 +1,17 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { entities } from './databases';
+import { UserModule } from './modules/user/user.module';
+import { AuthMiddleware } from './commons/middlewares/auth.middleware';
+import { AuthGuard } from './commons/guards/auth.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
-    AuthModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -24,8 +26,23 @@ import { entities } from './databases';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('/auth/login', '/auth/register')
+      .forRoutes('*');
+  }
+}

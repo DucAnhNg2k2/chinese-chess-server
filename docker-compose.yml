@@ -1,0 +1,10 @@
+version: '3'
+services:
+  nodejs:
+    container_name: chinese-chess-server-app-cicd
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: chinese-chess-server-app-cicd
+    ports:
+      - '3000:${SERVER_PORT}'

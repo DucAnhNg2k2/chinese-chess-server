@@ -15,7 +15,7 @@ export class UserProfileEntity extends BaseModal<UserProfileEntity> {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @PrimaryColumn({ name: 'user_id' })
+  @PrimaryColumn({ name: 'user_id', nullable: false, unique: true })
   userId: string;
 
   @Column({ name: 'full_name', nullable: false })
