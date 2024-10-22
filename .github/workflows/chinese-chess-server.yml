@@ -36,7 +36,7 @@ jobs:
             git pull
             docker-compose down
             docker container prune -f
-            docker rmi nestjs-app-cicd:latest
+            docker rmi chinese-chess-server-app-cicd:latest
             docker image prune -f
             docker-compose build
             docker-compose up -d
