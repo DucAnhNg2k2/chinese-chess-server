@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-import { RoomManager } from './room/room.manager';
+import { RoomGameManager } from './room/room.manager';
 import { UserGameManager } from './user/user.manager';
 
 @Controller('games')
 export class GameController {
   constructor(
-    private roomManager: RoomManager,
+    private roomManager: RoomGameManager,
     private userManager: UserGameManager,
   ) {}
 

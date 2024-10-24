@@ -3,6 +3,7 @@ import { UserStatus } from 'src/const/user.const';
 export enum UserGameStatus {
   OFFLINE = 'offline',
   ONLINE = 'online',
+  IN_ROOM = 'in_room',
   IN_GAME = 'in_game',
 }
 export interface UserGame {

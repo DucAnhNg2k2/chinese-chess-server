@@ -13,6 +13,9 @@ export class UserGameManager {
   addUser(user: UserGame) {
     this.users[user.id] = user;
   }
+  removeUser(userId: string) {
+    delete this.users[userId];
+  }
 
   getUserById(userId: string) {
     return this.users[userId];
