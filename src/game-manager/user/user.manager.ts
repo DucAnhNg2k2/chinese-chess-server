@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { UserStatus } from 'src/const/user.const';
-import { User, UserMap } from './user.interface';
+import { UserGame, UserGameMap, UserGameStatus } from './user.interface';
 
 @Injectable()
-export class UserManager {
-  private users: UserMap = {};
+export class UserGameManager {
+  private users: UserGameMap = {};
 
-  addUser(user: User) {
+  getUsers(): Array<UserGame> {
+    return Object.values(this.users);
+  }
+
+  addUser(user: UserGame) {
     this.users[user.id] = user;
   }
 
@@ -14,7 +18,7 @@ export class UserManager {
     return this.users[userId];
   }
 
-  updateUserStatus(userId: string, status: UserStatus) {
+  updateUserStatus(userId: string, status: UserGameStatus) {
     const user = this.users[userId];
     if (!user) {
       return;

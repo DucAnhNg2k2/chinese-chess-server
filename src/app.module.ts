@@ -8,6 +8,7 @@ import { entities } from './databases';
 import { UserModule } from './modules/user/user.module';
 import { AuthMiddleware } from './commons/middlewares/auth.middleware';
 import { AuthGuard } from './commons/guards/auth.guard';
+import { GameModule } from './game-manager/game.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthGuard } from './commons/guards/auth.guard';
     }),
     AuthModule,
     UserModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [
