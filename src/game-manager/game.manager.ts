@@ -27,7 +27,7 @@ export interface SocketToUser {
 }
 
 @WebSocketGateway(8080, {
-  transports: ['websocket'],
+  transports: ['websocket', 'polling'],
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
