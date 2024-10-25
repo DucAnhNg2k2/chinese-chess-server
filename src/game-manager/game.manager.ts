@@ -26,7 +26,13 @@ export interface SocketToUser {
   [socketId: string]: string;
 }
 
-@WebSocketGateway(8080, { transports: ['websocket'], cors: true })
+@WebSocketGateway(8080, {
+  transports: ['websocket'],
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+})
 export class GameManager
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
