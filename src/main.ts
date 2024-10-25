@@ -5,6 +5,7 @@ import { InterceptorResponse } from './commons/interceptors/response.interceptor
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionResponse } from './commons/exceptions/http.exception';
 import { WsExceptionResponse } from './commons/exceptions/ws.exception';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,7 @@ async function bootstrap() {
     origin: '*',
     methods: '*',
   });
+  app.useWebSocketAdapter(new IoAdapter(app));
   const configService = app.get(ConfigService);
   await app.listen(configService.get('SERVER_PORT'));
 }
