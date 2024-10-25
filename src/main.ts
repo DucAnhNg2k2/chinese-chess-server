@@ -13,10 +13,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new InterceptorResponse());
   app.useGlobalFilters(new HttpExceptionResponse(), new WsExceptionResponse());
-  app.enableCors({
-    origin: '*',
-    methods: '*',
-  });
   app.useWebSocketAdapter(new IoAdapter(app));
   const configService = app.get(ConfigService);
   await app.listen(configService.get('SERVER_PORT'));

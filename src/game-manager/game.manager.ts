@@ -45,29 +45,35 @@ export class GameManager
     private readonly jwtCoreService: JwtCoreService,
     private readonly userManager: UserGameManager,
     private readonly roomManager: RoomGameManager,
-  ) {}
+  ) {
+    console.log('[GameManager]: ', '---- OK');
+  }
 
   afterInit(server: any) {}
 
   async handleConnection(client: Socket) {
-    const token = client.handshake.query.token as string;
-    if (!token) {
-      client.disconnect();
-      return;
-    }
+    try {
+      const token = client.handshake.query.token as string;
+      if (!token) {
+        client.disconnect();
+        return;
+      }
 
-    const user = this.jwtCoreService.verify(token);
-    if (!user) {
-      client.disconnect();
-      return;
-    }
+      const user = this.jwtCoreService.verify(token);
+      if (!user) {
+        client.disconnect();
+        return;
+      }
 
-    this.userToSocket[user.id] = client;
-    this.socketToUser[client.id] = user.id;
-    this.userManager.addUser({
-      id: user.id,
-      status: UserGameStatus.ONLINE,
-    });
+      this.userToSocket[user.id] = client;
+      this.socketToUser[client.id] = user.id;
+      this.userManager.addUser({
+        id: user.id,
+        status: UserGameStatus.ONLINE,
+      });
+    } catch (err) {
+      console.log('[GameManager]', err);
+    }
   }
 
   async handleDisconnect(client: Socket) {
