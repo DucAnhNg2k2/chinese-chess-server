@@ -22,6 +22,7 @@ import { GameEventServer } from './game.event';
 import { RoomGameManager } from './room/room.manager';
 import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
+import { LeaveRoomCommand } from 'src/commands/game-manager/leave-room.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -52,6 +53,7 @@ export class GameManager
   private startGameCommand: StartGameCommand;
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
+  private leaveRoomCommand: LeaveRoomCommand;
 
   constructor(
     private readonly jwtCoreService: JwtCoreService,
@@ -76,6 +78,13 @@ export class GameManager
       this.gameStateManager,
     );
     this.joinRoomCommand = new JoinRoomCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+    );
+    this.leaveRoomCommand = new LeaveRoomCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -145,6 +154,17 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     const result = await this.startGameCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.LEAVE_ROOM)
+  async leaveRoom(
+    @MessageBody() dto: MessageJoinRoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const result = await this.leaveRoomCommand.execute({
       dto,
       client,
     });
