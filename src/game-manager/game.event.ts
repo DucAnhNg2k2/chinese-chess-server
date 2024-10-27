@@ -1,5 +1,11 @@
-export enum GameEvent {
-  ERROR = 'error',
-  CREATE_ROOM = 'CREATE_ROOM',
-  JOIN_ROOM = 'JOIN_ROOM',
+export enum GameEventServer {
+  ERROR = 'SERVER_ERROR',
+  CREATE_ROOM = 'SERVER_CREATE_ROOM',
+  JOIN_ROOM = 'SERVER_JOIN_ROOM',
+  START_GAME = 'SERVER_START_GAME',
+}
+
+export enum GameEventClient {
+  ERROR = 'CLIENT_ERROR',
+  START_GAME = 'CLIENT_START_GAME',
 }

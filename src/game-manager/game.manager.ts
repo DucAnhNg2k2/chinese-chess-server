@@ -1,4 +1,4 @@
-import { UserGameManager } from './user/user.manager';
+import { OnModuleInit } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,16 +8,20 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { CreateRoomCommand } from 'src/commands/game-manager/create-room.command';
+import { JoinRoomCommand } from 'src/commands/game-manager/join-room.command';
+import { StartGameCommand } from 'src/commands/game-manager/start-game.command';
 import { JwtCoreService } from 'src/modules/jwt/jwt.core.service';
-import { UserGameStatus } from './user/user.interface';
-import { GameEvent } from './game.event';
 import { MessageCreateRoomDto } from './dtos/message-create-room.dto';
-import { RoomGameManager } from './room/room.manager';
-import { randomUUID } from 'crypto';
 import { MessageJoinRoomDto } from './dtos/message-join-room.dto';
+import { MessageStartGameDto } from './dtos/message-start-game.dto';
+import { GameStateManager } from './game-state/game-state.manager';
+import { GameEventServer } from './game.event';
+import { RoomGameManager } from './room/room.manager';
+import { UserGameStatus } from './user/user.interface';
+import { UserGameManager } from './user/user.manager';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -34,19 +38,50 @@ export interface SocketToUser {
   },
 })
 export class GameManager
-  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
+  implements
+    OnGatewayConnection,
+    OnGatewayDisconnect,
+    OnGatewayInit,
+    OnModuleInit
 {
   @WebSocketServer()
   server: Server;
 
   private userToSocket: UserToSocket = {};
   private socketToUser: SocketToUser = {};
+  private startGameCommand: StartGameCommand;
+  private createRoomCommand: CreateRoomCommand;
+  private joinRoomCommand: JoinRoomCommand;
+
   constructor(
     private readonly jwtCoreService: JwtCoreService,
     private readonly userManager: UserGameManager,
     private readonly roomManager: RoomGameManager,
-  ) {
-    console.log('[GameManager]: ', '---- OK');
+    private readonly gameStateManager: GameStateManager,
+  ) {}
+
+  onModuleInit() {
+    this.startGameCommand = new StartGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+    );
+    this.createRoomCommand = new CreateRoomCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+    );
+    this.joinRoomCommand = new JoinRoomCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+    );
   }
 
   afterInit(server: any) {}
@@ -85,43 +120,33 @@ export class GameManager
     client.disconnect();
   }
 
-  @SubscribeMessage(GameEvent.CREATE_ROOM)
+  @SubscribeMessage(GameEventServer.CREATE_ROOM)
   async createRoom(
     @MessageBody() body: MessageCreateRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = this.socketToUser[client.id];
-    const user = this.userManager.getUserById(userId);
-    if (user.status !== UserGameStatus.ONLINE) {
-      throw new WsException('User is not online');
-    }
-
-    const roomId = randomUUID();
-    const room = this.roomManager.createRoom({
-      id: roomId,
-      ownerId: userId,
-      playerIds: [userId],
-    });
-    user.status = UserGameStatus.IN_ROOM;
+    const result = await this.createRoomCommand.execute({ client });
   }
 
-  @SubscribeMessage(GameEvent.JOIN_ROOM)
+  @SubscribeMessage(GameEventServer.JOIN_ROOM)
   async joinRoom(
     @MessageBody() dto: MessageJoinRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = this.socketToUser[client.id];
-    const user = this.userManager.getUserById(userId);
-    if (user.status !== UserGameStatus.ONLINE) {
-      throw new WsException('User is not online');
-    }
+    const result = await this.joinRoomCommand.execute({
+      dto,
+      client,
+    });
+  }
 
-    const room = this.roomManager.getRoomById(dto.roomId);
-    if (!room) {
-      throw new WsException('Room not found');
-    }
-
-    room.playerIds = [...room.playerIds, userId];
-    user.status = UserGameStatus.IN_ROOM;
+  @SubscribeMessage(GameEventServer.START_GAME)
+  async startGame(
+    @MessageBody() dto: MessageStartGameDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const result = await this.startGameCommand.execute({
+      dto,
+      client,
+    });
   }
 }

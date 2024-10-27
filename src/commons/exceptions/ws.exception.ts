@@ -6,7 +6,7 @@ import {
   WsExceptionFilter,
 } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { GameEvent } from 'src/game-manager/game.event';
+import { GameEventServer } from 'src/game-manager/game.event';
 
 @Catch(WsException)
 export class WsExceptionResponse implements WsExceptionFilter {
@@ -27,6 +27,6 @@ export class WsExceptionResponse implements WsExceptionFilter {
 
     this.logger.error(`WS Exception: ${exception.message}`, exception.stack);
 
-    client.emit(GameEvent.ERROR, errorResponse);
+    client.emit(GameEventServer.ERROR, errorResponse);
   }
 }

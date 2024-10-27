@@ -1,5 +1,3 @@
-import { UserStatus } from 'src/const/user.const';
-
 export enum UserGameStatus {
   OFFLINE = 'offline',
   ONLINE = 'online',
