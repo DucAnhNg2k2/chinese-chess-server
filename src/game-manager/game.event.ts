@@ -4,6 +4,7 @@ export enum GameEventServer {
   JOIN_ROOM = 'SERVER_JOIN_ROOM',
   START_GAME = 'SERVER_START_GAME',
   LEAVE_ROOM = 'SERVER_LEAVE_ROOM',
+  MOVE_PIECE = 'SERVER_MOVE_PIECE',
 }
 
 export enum GameEventClient {

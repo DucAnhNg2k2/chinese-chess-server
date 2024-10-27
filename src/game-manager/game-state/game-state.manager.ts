@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { GameState, GameStateMap } from './game-state.interface';
+import { initGameStateBoard } from './game-state.util';
 
+// chinese-board
 @Injectable()
 export class GameStateManager {
   constructor() {}
@@ -20,11 +22,7 @@ export class GameStateManager {
       gameId,
       roomId,
       currentPlayerId,
-      board: [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', ''],
-      ],
+      board: initGameStateBoard(),
       gameOver: false,
     };
     this.gameStates[gameId] = newGame;
