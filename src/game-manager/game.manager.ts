@@ -31,9 +31,10 @@ export interface SocketToUser {
   [socketId: string]: string;
 }
 
-@WebSocketGateway(8080, {
+@WebSocketGateway(3008, {
   transports: ['websocket', 'polling'],
   cors: {
+    allowedHeaders: '*',
     origin: '*',
     methods: ['GET', 'POST'],
   },
@@ -98,6 +99,8 @@ export class GameManager
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.query.token as string;
+      console.log('[token]:', token);
+
       if (!token) {
         client.disconnect();
         return;
