@@ -32,6 +32,7 @@ export interface SocketToUser {
 }
 
 @WebSocketGateway(3008, {
+  path: '/socket.io',
   transports: ['websocket'],
   cors: {
     allowedHeaders: '*',
