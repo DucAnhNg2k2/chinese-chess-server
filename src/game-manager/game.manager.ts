@@ -32,7 +32,7 @@ export interface SocketToUser {
 }
 
 @WebSocketGateway(3008, {
-  transports: ['websocket', 'polling'],
+  transports: ['websocket'],
   cors: {
     allowedHeaders: '*',
     origin: '*',
