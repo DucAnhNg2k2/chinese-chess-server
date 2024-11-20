@@ -1,13 +1,12 @@
+import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { socketEmitError } from 'src/commons/utils/socket-error';
-import { MessageStartGameDto } from 'src/game-manager/dtos/message-start-game.dto';
 import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
 import { CommandBase } from './../../commons/base/command.base';
 import { SocketToUser, UserToSocket } from './../../game-manager/game.manager';
-import { randomUUID } from 'crypto';
 
 export interface CreateRoomCommandPayload {
   client: Socket;

@@ -14,6 +14,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new InterceptorResponse());
   app.useGlobalFilters(new HttpExceptionResponse(), new WsExceptionResponse());
   app.useWebSocketAdapter(new IoAdapter(app));
+  app.enableCors();
   const configService = app.get(ConfigService);
   await app.listen(configService.get('SERVER_PORT'));
 }
