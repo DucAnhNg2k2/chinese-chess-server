@@ -16,5 +16,6 @@ export class RoomGameManager {
 
   createRoom(room: Room) {
     this.rooms[room.id] = room;
+    return room;
   }
 }

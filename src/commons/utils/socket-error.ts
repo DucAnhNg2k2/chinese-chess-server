@@ -5,4 +5,5 @@ export const socketEmitError = (client: Socket, message: string) => {
   client.emit(GameEventClient.ERROR, {
     message,
   });
+  return null;
 };

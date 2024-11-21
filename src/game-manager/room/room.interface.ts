@@ -3,6 +3,12 @@ export interface Room {
   // name: string;
   playerIds: string[];
   ownerId: string;
+  status: RoomStatus;
+}
+
+export enum RoomStatus {
+  PENDING = 'pending',
+  PLAYING = 'playing',
 }
 
 export interface RoomMap {

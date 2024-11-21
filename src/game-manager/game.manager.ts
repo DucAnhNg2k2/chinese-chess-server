@@ -78,6 +78,7 @@ export class GameManager
       this.userManager,
       this.roomManager,
       this.gameStateManager,
+      this.server,
     );
     this.joinRoomCommand = new JoinRoomCommand(
       this.userToSocket,
@@ -85,6 +86,7 @@ export class GameManager
       this.userManager,
       this.roomManager,
       this.gameStateManager,
+      this.server,
     );
     this.leaveRoomCommand = new LeaveRoomCommand(
       this.userToSocket,
@@ -100,7 +102,6 @@ export class GameManager
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.query.token as string;
-      console.log('[token]:', token);
       if (!token) {
         client.disconnect();
         return;
@@ -136,7 +137,6 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     const room: Room = await this.createRoomCommand.execute({ client });
-    client.emit(GameEventClient.CREATE_ROOM, room);
   }
 
   @SubscribeMessage(GameEventServer.JOIN_ROOM)
@@ -144,7 +144,7 @@ export class GameManager
     @MessageBody() dto: MessageJoinRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const result = await this.joinRoomCommand.execute({
+    const room: Room = await this.joinRoomCommand.execute({
       dto,
       client,
     });
