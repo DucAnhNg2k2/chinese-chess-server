@@ -32,9 +32,8 @@ export interface SocketToUser {
   [socketId: string]: string;
 }
 
-@WebSocketGateway(3008, {
-  path: '/socket.io',
-  transports: ['websocket'],
+@WebSocketGateway(8080, {
+  transports: ['websocket', 'polling'],
   cors: {
     allowedHeaders: '*',
     origin: '*',
@@ -102,18 +101,15 @@ export class GameManager
     try {
       const token = client.handshake.query.token as string;
       console.log('[token]:', token);
-
       if (!token) {
         client.disconnect();
         return;
       }
-
       const user = this.jwtCoreService.verify(token);
       if (!user) {
         client.disconnect();
         return;
       }
-
       this.userToSocket[user.id] = client;
       this.socketToUser[client.id] = user.id;
       this.userManager.addUser({

@@ -8,3 +8,4 @@ services:
     image: chinese-chess-server-app-cicd
     ports:
       - '3005:${SERVER_PORT}'
+      - '8080:${SERVER_SOCKET_PORT}'
