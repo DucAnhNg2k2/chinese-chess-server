@@ -9,5 +9,6 @@ export enum GameEventServer {
 
 export enum GameEventClient {
   ERROR = 'CLIENT_ERROR',
+  CREATE_ROOM = 'CLIENT_CREATE_ROOM',
   START_GAME = 'CLIENT_START_GAME',
 }

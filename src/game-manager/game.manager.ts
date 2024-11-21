@@ -18,11 +18,12 @@ import { MessageCreateRoomDto } from './dtos/message-create-room.dto';
 import { MessageJoinRoomDto } from './dtos/message-join-room.dto';
 import { MessageStartGameDto } from './dtos/message-start-game.dto';
 import { GameStateManager } from './game-state/game-state.manager';
-import { GameEventServer } from './game.event';
+import { GameEventClient, GameEventServer } from './game.event';
 import { RoomGameManager } from './room/room.manager';
 import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
 import { LeaveRoomCommand } from 'src/commands/game-manager/leave-room.command';
+import { Room } from './room/room.interface';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -138,7 +139,8 @@ export class GameManager
     @MessageBody() body: MessageCreateRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const result = await this.createRoomCommand.execute({ client });
+    const room: Room = await this.createRoomCommand.execute({ client });
+    client.emit(GameEventClient.CREATE_ROOM, room);
   }
 
   @SubscribeMessage(GameEventServer.JOIN_ROOM)

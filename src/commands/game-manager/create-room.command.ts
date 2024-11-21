@@ -7,6 +7,7 @@ import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
 import { CommandBase } from './../../commons/base/command.base';
 import { SocketToUser, UserToSocket } from './../../game-manager/game.manager';
+import { Room } from 'src/game-manager/room/room.interface';
 
 export interface CreateRoomCommandPayload {
   client: Socket;
@@ -23,7 +24,7 @@ export class CreateRoomCommand
     private gameStateManager: GameStateManager,
   ) {}
 
-  async execute(payload: CreateRoomCommandPayload) {
+  async execute(payload: CreateRoomCommandPayload): Promise<any> {
     const { client } = payload;
 
     const userId = this.socketToUser[client.id];
