@@ -98,27 +98,27 @@ export class GameManager
   afterInit(server: any) {}
 
   async handleConnection(client: Socket) {
-    // try {
-    //   const token = client.handshake.query.token as string;
-    //   console.log('[token]:', token);
-    //   if (!token) {
-    //     client.disconnect();
-    //     return;
-    //   }
-    //   const user = this.jwtCoreService.verify(token);
-    //   if (!user) {
-    //     client.disconnect();
-    //     return;
-    //   }
-    //   this.userToSocket[user.id] = client;
-    //   this.socketToUser[client.id] = user.id;
-    //   this.userManager.addUser({
-    //     id: user.id,
-    //     status: UserGameStatus.ONLINE,
-    //   });
-    // } catch (err) {
-    //   console.log('[GameManager]', err);
-    // }
+    try {
+      const token = client.handshake.query.token as string;
+      console.log('[token]:', token);
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+      const user = this.jwtCoreService.verify(token);
+      if (!user) {
+        client.disconnect();
+        return;
+      }
+      this.userToSocket[user.id] = client;
+      this.socketToUser[client.id] = user.id;
+      this.userManager.addUser({
+        id: user.id,
+        status: UserGameStatus.ONLINE,
+      });
+    } catch (err) {
+      console.log('[GameManager]', err);
+    }
   }
 
   async handleDisconnect(client: Socket) {
