@@ -5,6 +5,7 @@ export enum UserGameStatus {
   ONLINE = 'online',
   IN_ROOM = 'in_room',
   IN_GAME = 'in_game',
+  READY = 'ready',
 }
 export interface UserGame {
   id: string;

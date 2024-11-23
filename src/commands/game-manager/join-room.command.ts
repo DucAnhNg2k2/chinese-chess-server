@@ -48,7 +48,12 @@ export class JoinRoomCommand implements CommandBase<JoinRoomCommandPayload> {
     user.status = UserGameStatus.IN_ROOM;
 
     // gửi message room cho tất cả người chơi trong room
-    this.server.to(room.id).emit(GameEventClient.PLAYER_JOIN_ROOM, userId);
+    this.server
+      .to(room.id)
+      .emit(
+        GameEventClient.PLAYER_JOIN_ROOM,
+        this.userManager.getUserById(userId),
+      );
 
     client.join(dto.roomId);
     client.emit(

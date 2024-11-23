@@ -13,11 +13,11 @@ import { Server, Socket } from 'socket.io';
 import { CreateRoomCommand } from 'src/commands/game-manager/create-room.command';
 import { JoinRoomCommand } from 'src/commands/game-manager/join-room.command';
 import { LeaveRoomCommand } from 'src/commands/game-manager/leave-room.command';
-import { StartGameCommand } from 'src/commands/game-manager/start-game.command';
+import { PlayerReadyGameCommand } from 'src/commands/game-manager/player-ready.command';
 import { JwtCoreService } from 'src/modules/jwt/jwt.core.service';
 import { MessageCreateRoomDto } from './dtos/message-create-room.dto';
 import { MessageJoinRoomDto } from './dtos/message-join-room.dto';
-import { MessageStartGameDto } from './dtos/message-start-game.dto';
+import { MessageStartGameDto } from './dtos/player-ready-game.dto';
 import { GameStateManager } from './game-state/game-state.manager';
 import { GameEventServer } from './game.event';
 import { Room } from './room/room.interface';
@@ -53,7 +53,7 @@ export class GameManager
 
   private userToSocket: UserToSocket = {};
   private socketToUser: SocketToUser = {};
-  private startGameCommand: StartGameCommand;
+  private startGameCommand: PlayerReadyGameCommand;
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
@@ -67,12 +67,13 @@ export class GameManager
   ) {}
 
   onModuleInit() {
-    this.startGameCommand = new StartGameCommand(
+    this.startGameCommand = new PlayerReadyGameCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
       this.roomManager,
       this.gameStateManager,
+      this.server,
     );
     this.createRoomCommand = new CreateRoomCommand(
       this.userToSocket,
@@ -104,18 +105,15 @@ export class GameManager
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.query.token as string;
-      console.log('[GameManager] token', token);
       if (!token) {
         client.disconnect();
         return;
       }
       const user = this.jwtCoreService.verify(token);
-      console.log('[GameManager] user', user);
       if (!user) {
         client.disconnect();
         return;
       }
-      console.log('[GameManager] user connected', user);
       const userProfile = await this.getUserProfileCommand.execute(user);
       this.userToSocket[user.id] = client;
       this.socketToUser[client.id] = user.id;
@@ -160,7 +158,7 @@ export class GameManager
     });
   }
 
-  @SubscribeMessage(GameEventServer.START_GAME)
+  @SubscribeMessage(GameEventServer.PLAYER_READY)
   async startGame(
     @MessageBody() dto: MessageStartGameDto,
     @ConnectedSocket() client: Socket,
