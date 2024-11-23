@@ -44,6 +44,7 @@ export class CreateRoomCommand
       ownerId: userId,
       playerIds: [userId],
       status: RoomStatus.PENDING,
+      createdAt: new Date(),
     });
     user.status = UserGameStatus.IN_ROOM;
 

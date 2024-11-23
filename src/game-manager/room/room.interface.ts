@@ -3,6 +3,7 @@ export interface Room {
   playerIds: string[];
   ownerId: string;
   status: RoomStatus;
+  createdAt: Date;
 }
 
 export enum RoomStatus {
