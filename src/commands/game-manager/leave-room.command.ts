@@ -32,14 +32,18 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
       return socketEmitError(client, 'user-đang-không-trong-room');
     }
 
-    const room = this.roomManager.getRoomById(dto.roomId);
+    const room = this.roomManager.findRoomByPlayerId(userId);
     if (!room) {
-      return socketEmitError(client, 'room-không-tồn-tại');
+      return socketEmitError(client, 'user-không-ở-trong-room');
     }
 
     room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
     user.status = UserGameStatus.ONLINE;
 
-    client.leave(dto.roomId);
+    if (room.playerIds.length === 0) {
+      this.roomManager.deleteRoom(room.id);
+    }
+
+    client.leave(room.id);
   }
 }

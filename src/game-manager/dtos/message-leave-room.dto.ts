@@ -1,3 +1,1 @@
-export interface MessageLeaveRoomDto {
-  roomId: string;
-}
+export interface MessageLeaveRoomDto {}

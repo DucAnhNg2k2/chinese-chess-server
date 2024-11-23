@@ -124,14 +124,14 @@ export class GameManager
 
   async handleDisconnect(client: Socket) {
     const userId = this.socketToUser[client.id];
-    delete this.userToSocket[userId];
-    delete this.socketToUser[client.id];
-    client.disconnect();
     if (!userId) {
       return;
     }
+    this.leaveRoomCommand.execute({ dto: {}, client });
     this.userManager.removeUser(userId);
-    this.roomManager.handleRoomWhenDisconnect(userId);
+    delete this.userToSocket[userId];
+    delete this.socketToUser[client.id];
+    client.disconnect();
   }
 
   @SubscribeMessage(GameEventServer.CREATE_ROOM)
