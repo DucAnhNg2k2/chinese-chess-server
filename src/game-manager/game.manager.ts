@@ -113,6 +113,7 @@ export class GameManager
         client.disconnect();
         return;
       }
+      console.log('[GameManager] user connected', user);
       const userProfile = await this.getUserProfileCommand.execute(user);
       this.userToSocket[user.id] = client;
       this.socketToUser[client.id] = user.id;
