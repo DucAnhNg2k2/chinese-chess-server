@@ -12,18 +12,18 @@ import {
 import { Server, Socket } from 'socket.io';
 import { CreateRoomCommand } from 'src/commands/game-manager/create-room.command';
 import { JoinRoomCommand } from 'src/commands/game-manager/join-room.command';
+import { LeaveRoomCommand } from 'src/commands/game-manager/leave-room.command';
 import { StartGameCommand } from 'src/commands/game-manager/start-game.command';
 import { JwtCoreService } from 'src/modules/jwt/jwt.core.service';
 import { MessageCreateRoomDto } from './dtos/message-create-room.dto';
 import { MessageJoinRoomDto } from './dtos/message-join-room.dto';
 import { MessageStartGameDto } from './dtos/message-start-game.dto';
 import { GameStateManager } from './game-state/game-state.manager';
-import { GameEventClient, GameEventServer } from './game.event';
+import { GameEventServer } from './game.event';
+import { Room } from './room/room.interface';
 import { RoomGameManager } from './room/room.manager';
 import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
-import { LeaveRoomCommand } from 'src/commands/game-manager/leave-room.command';
-import { Room } from './room/room.interface';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -124,11 +124,14 @@ export class GameManager
 
   async handleDisconnect(client: Socket) {
     const userId = this.socketToUser[client.id];
-
     delete this.userToSocket[userId];
     delete this.socketToUser[client.id];
-    this.userManager.removeUser(userId);
     client.disconnect();
+    if (!userId) {
+      return;
+    }
+    this.userManager.removeUser(userId);
+    this.roomManager.handleRoomWhenDisconnect(userId);
   }
 
   @SubscribeMessage(GameEventServer.CREATE_ROOM)

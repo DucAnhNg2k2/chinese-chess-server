@@ -18,4 +18,18 @@ export class RoomGameManager {
     this.rooms[room.id] = room;
     return room;
   }
+
+  handleRoomWhenDisconnect(userId: string) {
+    const roomId = Object.keys(this.rooms).find((roomId) => {
+      return this.rooms[roomId].playerIds.includes(userId);
+    });
+    if (!roomId) {
+      return;
+    }
+    const playerIds = this.rooms[roomId].playerIds;
+    if (playerIds.length === 1) {
+      delete this.rooms[roomId];
+      return;
+    }
+  }
 }
