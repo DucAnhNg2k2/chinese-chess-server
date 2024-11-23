@@ -104,11 +104,13 @@ export class GameManager
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.query.token as string;
+      console.log('[GameManager] token', token);
       if (!token) {
         client.disconnect();
         return;
       }
       const user = this.jwtCoreService.verify(token);
+      console.log('[GameManager] user', user);
       if (!user) {
         client.disconnect();
         return;
