@@ -39,7 +39,7 @@ export class RoomGameManager {
     const room = this.rooms[roomId];
     // get user info
     const userProfiles = room.playerIds.map((playerId) => {
-      return this.userGameManager.getUserById(playerId);
+      return this.userGameManager.getUserById(playerId)?.userProfile;
     });
     return {
       ...room,

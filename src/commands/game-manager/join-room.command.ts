@@ -40,6 +40,9 @@ export class JoinRoomCommand implements CommandBase<JoinRoomCommandPayload> {
     if (!room) {
       return socketEmitError(client, 'room-không-tồn-tại');
     }
+    if (room.playerIds.length > 2) {
+      return socketEmitError(client, 'room-đã-đầy');
+    }
 
     room.playerIds = [...room.playerIds, userId];
     user.status = UserGameStatus.IN_ROOM;
