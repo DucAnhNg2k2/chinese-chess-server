@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Room, RoomMap } from './room.interface';
+import { UserGameManager } from '../user/user.manager';
 
 @Injectable()
 export class RoomGameManager {
   private rooms: RoomMap = {};
 
-  constructor() {}
+  constructor(private userGameManager: UserGameManager) {}
 
   getRooms(): Array<Room> {
     return Object.values(this.rooms);
   }
+
   getRoomById(roomId: string) {
     return this.rooms[roomId];
   }
@@ -18,6 +20,7 @@ export class RoomGameManager {
     this.rooms[room.id] = room;
     return room;
   }
+
   deleteRoom(roomId: string) {
     delete this.rooms[roomId];
   }
@@ -30,5 +33,17 @@ export class RoomGameManager {
         return room;
       }
     }
+  }
+
+  getRoomInfo(roomId: string) {
+    const room = this.rooms[roomId];
+    // get user info
+    const userProfiles = room.playerIds.map((playerId) => {
+      return this.userGameManager.getUserById(playerId);
+    });
+    return {
+      ...room,
+      userProfiles,
+    };
   }
 }

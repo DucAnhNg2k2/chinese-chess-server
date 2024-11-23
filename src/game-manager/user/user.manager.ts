@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UserStatus } from 'src/const/user.const';
 import { UserGame, UserGameMap, UserGameStatus } from './user.interface';
 
 @Injectable()
@@ -13,6 +12,7 @@ export class UserGameManager {
   addUser(user: UserGame) {
     this.users[user.id] = user;
   }
+
   removeUser(userId: string) {
     delete this.users[userId];
   }

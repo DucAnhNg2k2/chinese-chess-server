@@ -48,7 +48,10 @@ export class CreateRoomCommand
     user.status = UserGameStatus.IN_ROOM;
 
     // gửi message tạo room thành công
-    client.emit(GameEventClient.ROOM_INFORMATION, room);
+    client.emit(
+      GameEventClient.ROOM_INFORMATION,
+      this.roomManager.getRoomInfo(roomId),
+    );
     client.join(roomId);
 
     return room;

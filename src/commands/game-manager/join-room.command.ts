@@ -48,7 +48,10 @@ export class JoinRoomCommand implements CommandBase<JoinRoomCommandPayload> {
     this.server.to(room.id).emit(GameEventClient.PLAYER_JOIN_ROOM, userId);
 
     client.join(dto.roomId);
-    client.emit(GameEventClient.ROOM_INFORMATION, room);
+    client.emit(
+      GameEventClient.ROOM_INFORMATION,
+      this.roomManager.getRoomInfo(dto.roomId),
+    );
     return room;
   }
 }

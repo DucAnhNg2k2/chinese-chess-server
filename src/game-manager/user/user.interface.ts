@@ -1,3 +1,5 @@
+import { UserProfileEntity } from 'src/databases/user-profile.entity';
+
 export enum UserGameStatus {
   OFFLINE = 'offline',
   ONLINE = 'online',
@@ -6,8 +8,8 @@ export enum UserGameStatus {
 }
 export interface UserGame {
   id: string;
-  // username: string;
   status: UserGameStatus;
+  userProfile: UserProfileEntity;
 }
 
 export interface UserGameMap {

@@ -24,6 +24,7 @@ import { Room } from './room/room.interface';
 import { RoomGameManager } from './room/room.manager';
 import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
+import { GetUserProfileCommand } from 'src/commands/user/get-user-profile.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -62,6 +63,7 @@ export class GameManager
     private readonly userManager: UserGameManager,
     private readonly roomManager: RoomGameManager,
     private readonly gameStateManager: GameStateManager,
+    private readonly getUserProfileCommand: GetUserProfileCommand,
   ) {}
 
   onModuleInit() {
@@ -111,11 +113,13 @@ export class GameManager
         client.disconnect();
         return;
       }
+      const userProfile = await this.getUserProfileCommand.execute(user);
       this.userToSocket[user.id] = client;
       this.socketToUser[client.id] = user.id;
       this.userManager.addUser({
         id: user.id,
         status: UserGameStatus.ONLINE,
+        userProfile,
       });
     } catch (err) {
       console.log('[GameManager]', err);
