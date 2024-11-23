@@ -2,8 +2,13 @@ export interface GameState {
   gameId: string;
   roomId: string;
   currentPlayerId: string;
+  playerIds: string[];
   board: Array<Array<GameChessPiece | null>>;
   gameOver: boolean;
+  winnerId?: string;
+  playerIdToColorMap: {
+    [playerId: string]: GameChessPieceColorEnum;
+  };
 }
 
 export interface GameStateMap {
@@ -19,6 +24,8 @@ export enum GameChessPieceTypeEnum {
   PHÁO = 'PHÁO',
   TỐT = 'TỐT',
 }
+
+// người đi trước sẽ là người chơi đỏ
 export enum GameChessPieceColorEnum {
   RED = 'RED',
   BLACK = 'BLACK',

@@ -57,6 +57,7 @@ export class GameManager
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
+  private usersQueue: string[] = [];
 
   constructor(
     private readonly jwtCoreService: JwtCoreService,

@@ -41,6 +41,9 @@ export class PlayerReadyGameCommand
     if (!room) {
       return socketEmitError(client, 'room-không-tồn-tại');
     }
+    if (room.status === RoomStatus.PLAYING) {
+      return socketEmitError(client, 'room-đang-chơi');
+    }
 
     if (user.status === UserGameStatus.IN_GAME) {
       return socketEmitError(client, 'user-đã-ở-trong-game');
@@ -66,11 +69,28 @@ export class PlayerReadyGameCommand
       player1.status === UserGameStatus.READY &&
       player2.status === UserGameStatus.READY
     ) {
+      // Tìm xem có game cũ không
+      const oldGameState = this.gameStateManager.getGameStateByRoomId(room.id);
+      let winnerId = null;
+      if (oldGameState) {
+        oldGameState.gameOver = true;
+        winnerId = oldGameState.winnerId;
+      }
+
       // Tạo game mới
+      // Nếu có winnerId thì người còn lại sẽ là người đi trước, ngược lại chủ phòng sẽ đi trước
+      const currentPlayerId = (function () {
+        if (!winnerId) {
+          return room.ownerId;
+        }
+        return playerIds.find((id) => id !== winnerId);
+      })();
       const newGameState = this.gameStateManager.createNewGameState(
         room.id,
-        player1.id,
+        currentPlayerId,
+        playerIds,
       );
+
       // Gửi thông báo bắt đầu game
       this.server.to(room.id).emit(GameEventClient.START_GAME, newGameState);
       player1.status = UserGameStatus.IN_GAME;
