@@ -97,6 +97,7 @@ export class GameManager
       this.userManager,
       this.roomManager,
       this.gameStateManager,
+      this.server,
     );
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Room, RoomMap } from './room.interface';
+import { Room, RoomMap, RoomStatus } from './room.interface';
 import { UserGameManager } from '../user/user.manager';
 
 @Injectable()
@@ -45,5 +45,14 @@ export class RoomGameManager {
       ...room,
       userProfiles,
     };
+  }
+
+  updateRoomStatus(roomId: string, status: RoomStatus) {
+    const room = this.rooms[roomId];
+    if (!room) {
+      return;
+    }
+
+    room.status = status;
   }
 }
