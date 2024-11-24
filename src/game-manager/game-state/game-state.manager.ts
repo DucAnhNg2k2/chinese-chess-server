@@ -42,4 +42,15 @@ export class GameStateManager {
     this.gameStates[gameId] = newGame;
     return newGame;
   }
+
+  getPieceCanMove(gameStateId: number, x: number, y: number) {
+    const gameState = this.gameStates[gameStateId];
+    const boards = gameState.board;
+
+    const piece = boards[x][y];
+    if (!piece) {
+      return false;
+    }
+    return piece;
+  }
 }
