@@ -116,6 +116,14 @@ export class GameManager
         client.disconnect();
         return;
       }
+      // check xem connect chưa
+      // nếu có hủy kết nối cũ
+      const oldSocket = this.userToSocket[user.id];
+      delete this.socketToUser[oldSocket.id];
+      if (oldSocket) {
+        oldSocket.disconnect();
+      }
+
       const userProfile = await this.getUserProfileCommand.execute(user);
       this.userToSocket[user.id] = client;
       this.socketToUser[client.id] = user.id;
