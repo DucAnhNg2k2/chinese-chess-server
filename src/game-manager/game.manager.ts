@@ -119,8 +119,8 @@ export class GameManager
       // check xem connect chưa
       // nếu có hủy kết nối cũ
       const oldSocket = this.userToSocket[user.id];
-      delete this.socketToUser[oldSocket.id];
       if (oldSocket) {
+        delete this.socketToUser[oldSocket.id];
         oldSocket.disconnect();
       }
 
