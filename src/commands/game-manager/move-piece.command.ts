@@ -59,7 +59,7 @@ export class MovePieceGameCommand
     }
 
     // check move ... todo ...
-    if (board[toX][toY].color === piece.color) {
+    if (board[toX][toY]?.color === piece.color) {
       return socketEmitError(client, 'không-thể-ăn-quân-cờ-cùng-màu');
     }
     board[toX][toY] = piece;

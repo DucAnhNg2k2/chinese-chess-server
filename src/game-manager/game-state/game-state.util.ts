@@ -81,58 +81,49 @@ export const initGameStateBoard = (): Array<Array<GameChessPiece | null>> => {
   return [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10];
 };
 
-// const getPointsResultCanMove = (
-//   x: number,
-//   y: number,
-//   board: Array<Array<GameChessPiece | null>>,
-// ) => {
-//   const piece = board[x][y];
-//   const pointsResult = [];
-//   if (!piece) {
-//     return pointsResult;
-//   }
+const getPointsResultCanMove = (
+  x: number,
+  y: number,
+  board: Array<Array<GameChessPiece | null>>,
+) => {
+  if (x < 0 || x >= 9 || y < 0 || y >= 10) {
+    return [];
+  }
 
-//   switch (piece.type) {
-//     case GameChessPieceTypeEnum.XE:
-//       // xe có thể đi ngang hoặc dọc
-//       // đi ngang
-//       for (let i = x + 1; i < 9; i++) {
-//         if (this.checkPointCanMove(i, y, board)) {
-//           pointsResult.push({ x: i, y });
-//         } else {
-//           break;
-//         }
-//       }
-//       break;
-//     case 'MÃ':
-//       break;
-//     case 'TỊNH':
-//       break;
-//     case 'SĨ':
-//       break;
-//     case 'TƯỚNG':
-//       break;
-//     case 'PHÁO':
-//       break;
-//     case 'TỐT':
-//       break;
-//     default:
-//       return false;
-//   }
-//   return true;
-// };
+  const piece = board[x][y];
+  if (!piece) {
+    return [];
+  }
 
-// const checkPointCanMove = (
-//   x: number,
-//   y: number,
-//   board: Array<Array<GameChessPiece | null>>,
-// ) => {
-//   if (x < 0 || x >= 9 || y < 0 || y >= 10) {
-//     return false;
-//   }
-//   const piece = board[x][y];
-//   if (!piece) {
-//     return true;
-//   }
-//   return false;
-// };
+  switch (piece.type) {
+    case GameChessPieceTypeEnum.XE:
+      return getPointsResultCanMoveForXe(x, y, board);
+    case 'MÃ':
+      break;
+    case 'TỊNH':
+      break;
+    case 'SĨ':
+      break;
+    case 'TƯỚNG':
+      break;
+    case 'PHÁO':
+      break;
+    case 'TỐT':
+      break;
+    default:
+      return false;
+  }
+  return true;
+};
+
+const getPointsResultCanMoveForXe = (
+  x: number,
+  y: number,
+  board: Array<Array<GameChessPiece | null>>,
+) => {
+  const piece = board[x][y];
+  if (!piece) {
+    return true;
+  }
+  return false;
+};
