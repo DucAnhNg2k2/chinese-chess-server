@@ -110,6 +110,14 @@ export class GameManager
       this.gameStateManager,
       this.server,
     );
+    this.playerCancelReadyGameCommand = new PlayerCancelReadyGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
   }
 
   afterInit(server: any) {}
