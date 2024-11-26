@@ -25,6 +25,7 @@ import { RoomGameManager } from './room/room.manager';
 import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
 import { GetUserProfileCommand } from 'src/commands/user/get-user-profile.command';
+import { PlayerCancelReadyGameCommand } from 'src/commands/game-manager/player-cancel-ready.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -53,7 +54,8 @@ export class GameManager
 
   private userToSocket: UserToSocket = {};
   private socketToUser: SocketToUser = {};
-  private startGameCommand: PlayerReadyGameCommand;
+  private playerReadyGameCommand: PlayerReadyGameCommand;
+  private playerCancelReadyGameCommand: PlayerCancelReadyGameCommand;
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
@@ -68,7 +70,7 @@ export class GameManager
   ) {}
 
   onModuleInit() {
-    this.startGameCommand = new PlayerReadyGameCommand(
+    this.playerReadyGameCommand = new PlayerReadyGameCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -85,6 +87,14 @@ export class GameManager
       this.server,
     );
     this.joinRoomCommand = new JoinRoomCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
+    this.leaveRoomCommand = new LeaveRoomCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -173,7 +183,18 @@ export class GameManager
     @MessageBody() dto: MessagePlayerReadyGameDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const result = await this.startGameCommand.execute({
+    const result = await this.playerReadyGameCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.PLAYER_CANCEL_READY)
+  async cancelReadyGame(
+    @MessageBody() dto: MessagePlayerReadyGameDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const result = await this.playerCancelReadyGameCommand.execute({
       dto,
       client,
     });
