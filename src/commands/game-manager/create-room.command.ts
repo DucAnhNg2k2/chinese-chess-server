@@ -38,6 +38,11 @@ export class CreateRoomCommand
       return socketEmitError(client, 'user-đang-không-online');
     }
 
+    const checkRoomExists = this.roomManager.findRoomByPlayerId(userId);
+    if (checkRoomExists) {
+      return socketEmitError(client, 'user-đã-ở-trong-room');
+    }
+
     const roomId = randomUUID();
     const room = this.roomManager.createRoom({
       id: roomId,
