@@ -6,10 +6,11 @@ import { JwtCoreModule } from 'src/modules/jwt/jwt.core.module';
 import { UserGameManager } from './user/user.manager';
 import { GameStateManager } from './game-state/game-state.manager';
 import { UserCommandModule } from 'src/commands/user/user.command';
+import { GameControllerDev } from './game.controller.dev';
 
 @Module({
   imports: [JwtCoreModule, UserCommandModule],
-  controllers: [GameController],
+  controllers: [GameController, GameControllerDev],
   providers: [GameManager, RoomGameManager, UserGameManager, GameStateManager],
   exports: [GameManager, UserGameManager, RoomGameManager, GameStateManager],
 })
