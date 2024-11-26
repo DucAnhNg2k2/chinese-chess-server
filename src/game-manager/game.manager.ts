@@ -17,7 +17,7 @@ import { PlayerReadyGameCommand } from 'src/commands/game-manager/player-ready.c
 import { JwtCoreService } from 'src/modules/jwt/jwt.core.service';
 import { MessageCreateRoomDto } from './dtos/message-create-room.dto';
 import { MessageJoinRoomDto } from './dtos/message-join-room.dto';
-import { MessageStartGameDto } from './dtos/player-ready-game.dto';
+import { MessagePlayerReadyGameDto } from './dtos/player-ready-game.dto';
 import { GameStateManager } from './game-state/game-state.manager';
 import { GameEventServer } from './game.event';
 import { Room } from './room/room.interface';
@@ -170,7 +170,7 @@ export class GameManager
 
   @SubscribeMessage(GameEventServer.PLAYER_READY)
   async startGame(
-    @MessageBody() dto: MessageStartGameDto,
+    @MessageBody() dto: MessagePlayerReadyGameDto,
     @ConnectedSocket() client: Socket,
   ) {
     const result = await this.startGameCommand.execute({

@@ -1,13 +1,13 @@
-import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
 import { Server, Socket } from 'socket.io';
 import { CommandBase } from 'src/commons/base/command.base';
-import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
-import { UserGameManager } from 'src/game-manager/user/user.manager';
-import { RoomGameManager } from 'src/game-manager/room/room.manager';
-import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
-import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { socketEmitError } from 'src/commons/utils/socket-error';
+import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
+import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { GameEventClient } from 'src/game-manager/game.event';
+import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
+import { RoomGameManager } from 'src/game-manager/room/room.manager';
+import { UserGameStatus } from 'src/game-manager/user/user.interface';
+import { UserGameManager } from 'src/game-manager/user/user.manager';
 
 export interface MovePieceGameCommandPayload {
   dto: MovePieceChessDto;

@@ -1,1 +1,1 @@
-export interface MessageStartGameDto {}
+export interface MessagePlayerReadyGameDto {}
