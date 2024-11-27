@@ -9,6 +9,7 @@ import { socketEmitError } from 'src/commons/utils/socket-error';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { MessageLeaveRoomDto } from 'src/game-manager/dtos/message-leave-room.dto';
 import { GameEventClient } from 'src/game-manager/game.event';
+import { RoomStatus } from 'src/game-manager/room/room.interface';
 
 export interface LeaveRoomCommandPayload {
   dto: MessageLeaveRoomDto;
@@ -28,12 +29,14 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
   async execute(payload: LeaveRoomCommandPayload) {
     const { dto, client } = payload;
 
+    // Kiểm tra xem user có tồn tại không
     const userId = this.socketToUser[client.id];
     const user = this.userManager.getUserById(userId);
     if (user.status === UserGameStatus.ONLINE) {
       return socketEmitError(client, 'user-đang-không-trong-room');
     }
 
+    // Kiểm tra xem user có trong phòng nào không
     const room = this.roomManager.findRoomByPlayerId(userId);
     if (!room) {
       return socketEmitError(client, 'user-không-ở-trong-room');
@@ -42,12 +45,34 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
     room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
     user.status = UserGameStatus.ONLINE;
 
-    if (room.playerIds.length === 0) {
-      this.roomManager.deleteRoom(room.id);
+    // Kiểm tra xem room đang pending hay playing rồi
+    if (room.status === RoomStatus.PENDING) {
+      // Nếu phòng không còn ai => xóa bỏ phòng
+      if (room.playerIds.length === 0) {
+        this.roomManager.deleteRoom(room.id);
+      }
+      // Nếu phòng còn người => nhường lại chủ phòng
+      else {
+        room.ownerId = room.playerIds[0];
+      }
     }
-    // nhường lại chủ phòng
-    else {
-      room.ownerId = room.playerIds[0];
+
+    if (room.status === RoomStatus.PLAYING) {
+      room.status = RoomStatus.PENDING;
+
+      const winerId = room.playerIds.find((playerId) => playerId !== userId);
+      const loserId = userId;
+
+      const winer = this.userManager.getUserById(winerId);
+      const loser = this.userManager.getUserById(loserId);
+
+      winer.status = UserGameStatus.IN_ROOM;
+
+      this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
+        winer,
+        loser,
+        room,
+      });
     }
 
     client.leave(room.id);
