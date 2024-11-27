@@ -53,4 +53,8 @@ export class GameStateManager {
     }
     return piece;
   }
+
+  getById(id: string) {
+    return this.gameStates[id];
+  }
 }

@@ -26,6 +26,8 @@ import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
 import { GetUserProfileCommand } from 'src/commands/user/get-user-profile.command';
 import { PlayerCancelReadyGameCommand } from 'src/commands/game-manager/player-cancel-ready.command';
+import { MovePieceChessDto } from './dtos/move-piece-chess.dto';
+import { MovePieceGameCommand } from 'src/commands/game-manager/move-piece.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -59,6 +61,7 @@ export class GameManager
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
+  private movePieceChessCommand: MovePieceGameCommand;
   private usersQueue: string[] = [];
 
   constructor(
@@ -111,6 +114,14 @@ export class GameManager
       this.server,
     );
     this.playerCancelReadyGameCommand = new PlayerCancelReadyGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
+    this.movePieceChessCommand = new MovePieceGameCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -214,6 +225,17 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     const result = await this.leaveRoomCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.MOVE_PIECE)
+  async movePiece(
+    @MessageBody() dto: MovePieceChessDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const result = await this.movePieceChessCommand.execute({
       dto,
       client,
     });
