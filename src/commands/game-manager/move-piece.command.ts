@@ -93,6 +93,9 @@ export class MovePieceGameCommand
       return socketEmitError(client, 'Nước đi hở tướng');
     }
 
+    board[toX][toY] = piece;
+    board[fromX][fromY] = null;
+
     // xem hết cờ chưa
     let isCheckMate = false;
     // xem đối thủ bị chiếu tướng hay không
@@ -123,9 +126,6 @@ export class MovePieceGameCommand
         this.server.to(room.id).emit(GameEventClient.KING_IN_CHECK, {});
       }
     }
-
-    board[toX][toY] = piece;
-    board[fromX][fromY] = null;
 
     // update game state
     gameState.currentPlayerId = competitor;
