@@ -5,8 +5,10 @@ import { Point } from 'src/const/point.const';
 import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
 import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { getPointsResultCanMove } from 'src/game-manager/game-state/game-state.util';
+import { isKingInCheck } from 'src/game-manager/game-state/utils/is-kingincheck';
 import { GameEventClient } from 'src/game-manager/game.event';
 import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
+import { RoomStatus } from 'src/game-manager/room/room.interface';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
@@ -76,15 +78,57 @@ export class MovePieceGameCommand
       return socketEmitError(client, 'không thể đi đến điểm này');
     }
 
+    const currentPlayer = userId;
+    const competitor =
+      userId === gameState.playerIds[0]
+        ? gameState.playerIds[1]
+        : gameState.playerIds[0];
+
+    // check xem nước đi hở tướng hay không
+    const currentisKingInCheck = isKingInCheck(
+      board,
+      gameState.playerIdToColorMap[currentPlayer],
+    );
+    if (currentisKingInCheck) {
+      return socketEmitError(client, 'Nước đi hở tướng');
+    }
+
+    // xem hết cờ chưa
+    let isCheckMate = false;
+    // xem đối thủ bị chiếu tướng hay không
+    const competitorKingInCheck = isKingInCheck(
+      board,
+      gameState.playerIdToColorMap[competitor],
+    );
+
+    if (competitorKingInCheck) {
+      if (isCheckMate) {
+        const winer = this.userManager.getUserById(currentPlayer);
+        const loser = this.userManager.getUserById(competitor);
+
+        winer.status = UserGameStatus.IN_ROOM;
+        loser.status = UserGameStatus.IN_ROOM;
+        room.status = RoomStatus.PENDING;
+        gameState.gameOver = true;
+        gameState.winnerId = currentPlayer;
+
+        this.server.to(room.id).emit(GameEventClient.CHECKMATE, {
+          winer,
+          loser,
+          room,
+        });
+      }
+      // chưa hết cờ
+      else {
+        this.server.to(room.id).emit(GameEventClient.KING_IN_CHECK, {});
+      }
+    }
+
     board[toX][toY] = piece;
     board[fromX][fromY] = null;
 
     // update game state
-    const currentPlayerId =
-      userId === gameState.playerIds[0]
-        ? gameState.playerIds[1]
-        : gameState.playerIds[0];
-    gameState.currentPlayerId = currentPlayerId;
+    gameState.currentPlayerId = competitor;
 
     // emit to room
     this.server.to(room.id).emit(GameEventClient.MOVE_PIECE, {
