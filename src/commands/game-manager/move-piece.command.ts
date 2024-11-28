@@ -1,8 +1,10 @@
 import { Server, Socket } from 'socket.io';
 import { CommandBase } from 'src/commons/base/command.base';
 import { socketEmitError } from 'src/commons/utils/socket-error';
+import { Point } from 'src/const/point.const';
 import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
 import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
+import { getPointsResultCanMove } from 'src/game-manager/game-state/game-state.util';
 import { GameEventClient } from 'src/game-manager/game.event';
 import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
@@ -62,6 +64,18 @@ export class MovePieceGameCommand
     if (board[toX][toY]?.color === piece.color) {
       return socketEmitError(client, 'không-thể-ăn-quân-cờ-cùng-màu');
     }
+
+    const validMoves: Array<Point> = getPointsResultCanMove(
+      {
+        x: fromX,
+        y: fromY,
+      },
+      board,
+    );
+    if (!validMoves.some((point) => point.x === toX && point.y === toY)) {
+      return socketEmitError(client, 'không thể đi đến điểm này');
+    }
+
     board[toX][toY] = piece;
     board[fromX][fromY] = null;
 
