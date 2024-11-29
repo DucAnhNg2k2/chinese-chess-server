@@ -9,6 +9,7 @@ import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
 import { CommandBase } from '../../commons/base/command.base';
 import { SocketToUser, UserToSocket } from '../../game-manager/game.manager';
+import { convertTo1D } from 'src/game-manager/game-state/game-state.util';
 
 export interface PlayerReadyGameCommandPayload {
   dto: PlayerReadyGameDto;
@@ -90,9 +91,13 @@ export class PlayerReadyGameCommand
         currentPlayerId,
         playerIds,
       );
+      const emitGameState: any = { ...newGameState };
+      delete emitGameState.board;
+      // chuyển thành mản 1 chiều
+      emitGameState.board = convertTo1D(newGameState.board);
 
       // Gửi thông báo bắt đầu game
-      this.server.to(room.id).emit(GameEventClient.START_GAME, newGameState);
+      this.server.to(room.id).emit(GameEventClient.START_GAME, emitGameState);
       player1.status = UserGameStatus.IN_GAME;
       player2.status = UserGameStatus.IN_GAME;
       this.roomManager.updateRoomStatus(room.id, RoomStatus.PLAYING);

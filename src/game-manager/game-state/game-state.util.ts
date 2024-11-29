@@ -103,3 +103,9 @@ export const getPointsResultCanMove = (
       return [];
   }
 };
+
+export const convertTo1D = (board: Array<Array<GameChessPiece | null>>) => {
+  return board.reduce((acc, row) => {
+    return acc.concat(row);
+  }, []);
+};
