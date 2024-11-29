@@ -17,12 +17,12 @@ export interface GameStateMap {
 
 export enum GameChessPieceTypeEnum {
   XE = 'XE',
-  MÃ = 'MÃ',
-  TỊNH = 'TỊNH',
-  SĨ = 'SĨ',
-  TƯỚNG = 'TƯỚNG',
-  PHÁO = 'PHÁO',
-  TỐT = 'TỐT',
+  MA = 'MA',
+  TINH = 'TINH',
+  SI = 'SI',
+  TUONG = 'TUONG',
+  PHAO = 'PHAO',
+  TOT = 'TOT',
 }
 
 // người đi trước sẽ là người chơi đỏ

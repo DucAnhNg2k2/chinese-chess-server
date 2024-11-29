@@ -21,7 +21,15 @@ export const initGameStateBoard = (): Array<Array<GameChessPiece | null>> => {
     type,
     color,
   });
-  const { XE, MÃ, TỊNH, SĨ, TƯỚNG, PHÁO, TỐT } = GameChessPieceTypeEnum;
+  const {
+    XE,
+    MA: MÃ,
+    TINH: TỊNH,
+    SI: SĨ,
+    TUONG: TƯỚNG,
+    PHAO: PHÁO,
+    TOT: TỐT,
+  } = GameChessPieceTypeEnum;
   const { RED, BLACK } = GameChessPieceColorEnum;
 
   const row1 = [XE, MÃ, TỊNH, SĨ, TƯỚNG, SĨ, TỊNH, MÃ, XE].map((type) =>
@@ -67,7 +75,15 @@ export const getPointsResultCanMove = (
     return [];
   }
 
-  const { XE, MÃ, TỊNH, SĨ, TƯỚNG, PHÁO, TỐT } = GameChessPieceTypeEnum;
+  const {
+    XE,
+    MA: MÃ,
+    TINH: TỊNH,
+    SI: SĨ,
+    TUONG: TƯỚNG,
+    PHAO: PHÁO,
+    TOT: TỐT,
+  } = GameChessPieceTypeEnum;
   switch (piece.type) {
     case XE:
       return getPointsResultCanMoveForXe({ x, y }, board);

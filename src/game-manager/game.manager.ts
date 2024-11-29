@@ -28,6 +28,8 @@ import { GetUserProfileCommand } from 'src/commands/user/get-user-profile.comman
 import { PlayerCancelReadyGameCommand } from 'src/commands/game-manager/player-cancel-ready.command';
 import { MovePieceChessDto } from './dtos/move-piece-chess.dto';
 import { MovePieceGameCommand } from 'src/commands/game-manager/move-piece.command';
+import { GetValidMoveChessDto } from './dtos/get-valid-move.dto';
+import { GetValidMovesCommand } from 'src/commands/game-manager/get-valid-moves.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -62,6 +64,7 @@ export class GameManager
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
   private movePieceChessCommand: MovePieceGameCommand;
+  private getValidMovesCommand: GetValidMovesCommand;
   private usersQueue: string[] = [];
 
   constructor(
@@ -122,6 +125,14 @@ export class GameManager
       this.server,
     );
     this.movePieceChessCommand = new MovePieceGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
+    this.getValidMovesCommand = new GetValidMovesCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -239,6 +250,17 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     const result = await this.movePieceChessCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.GET_VALID_MOVES)
+  async getValidMoves(
+    @MessageBody() dto: GetValidMoveChessDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    return this.getValidMovesCommand.execute({
       dto,
       client,
     });

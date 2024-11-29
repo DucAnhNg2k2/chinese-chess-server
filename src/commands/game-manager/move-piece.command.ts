@@ -85,11 +85,11 @@ export class MovePieceGameCommand
         : gameState.playerIds[0];
 
     // check xem nước đi hở tướng hay không
-    const currentisKingInCheck = isKingInCheck(
+    const currentIsKingInCheck = isKingInCheck(
       board,
       gameState.playerIdToColorMap[currentPlayer],
     );
-    if (currentisKingInCheck) {
+    if (currentIsKingInCheck) {
       return socketEmitError(client, 'Nước đi hở tướng');
     }
 

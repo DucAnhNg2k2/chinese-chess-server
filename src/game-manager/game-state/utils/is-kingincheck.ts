@@ -17,7 +17,7 @@ const findKingPosition = (
       // Kiểm tra nếu là quân tướng và có màu sắc phù hợp
       if (
         piece &&
-        piece.type === GameChessPieceTypeEnum.TƯỚNG &&
+        piece.type === GameChessPieceTypeEnum.TUONG &&
         piece.color === kingColor
       ) {
         return { x, y }; // Trả về tọa độ quân tướng
@@ -36,7 +36,7 @@ export const isKingInCheck = (
   const kingX = kingPosition.x,
     kingY = kingPosition.y;
 
-  const { XE, MÃ, PHÁO, TỐT } = GameChessPieceTypeEnum;
+  const { XE, MA: MÃ, PHAO: PHÁO, TOT: TỐT } = GameChessPieceTypeEnum;
   for (let x = 0; x < board.length; x++) {
     for (let y = 0; y < board[x].length; y++) {
       const piece = board[x][y];
