@@ -122,8 +122,17 @@ const getPointsResultCanMoveForXe = (
   board: Array<Array<GameChessPiece | null>>,
 ) => {
   const piece = board[x][y];
-  if (!piece) {
-    return true;
+  const color = piece.color;
+  const points = [];
+
+  // top
+  for (let i = x - 1; i >= 0; i--) {
+    if (board[i][y]) {
+      if (board[i][y]?.color !== color) {
+        points.push({ x: i, y });
+      }
+      break;
+    }
+    points.push({ x: i, y });
   }
-  return false;
 };
