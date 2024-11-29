@@ -1,138 +1,89 @@
+import { Point } from 'src/const/point.const';
 import {
   GameChessPiece,
   GameChessPieceColorEnum,
   GameChessPieceTypeEnum,
 } from './game-state.interface';
+import { getPointsResultCanMoveForXe } from './utils/get-valids-move-for-xe';
+import { getPointsResultCanMoveForMa } from './utils/get-valids-move.for-ma';
+import { getPointsResultCanMoveForPhao } from './utils/get-valids-move-for-phao';
+import { getPointsResultCanMoveForTinh } from './utils/get-valids-move-for-tinh';
+import { getPointsResultCanMoveForTuong } from './utils/get-valids-move-for-tuong';
+import { getPointsResultCanMoveForSi } from './utils/get-valids-move-for-si';
+import { getPointsResultCanMoveForTot } from './utils/get-valids-move-for-tot';
 
 // board của game cờ tướng
 export const initGameStateBoard = (): Array<Array<GameChessPiece | null>> => {
-  const row1 = [
-    { type: GameChessPieceTypeEnum.XE, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.MÃ, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.TỊNH, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.SĨ, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.TƯỚNG, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.SĨ, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.TỊNH, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.MÃ, color: GameChessPieceColorEnum.RED },
-    { type: GameChessPieceTypeEnum.XE, color: GameChessPieceColorEnum.RED },
-  ];
+  const createPiece = (
+    type: GameChessPieceTypeEnum,
+    color: GameChessPieceColorEnum,
+  ): GameChessPiece => ({
+    type,
+    color,
+  });
+  const { XE, MÃ, TỊNH, SĨ, TƯỚNG, PHÁO, TỐT } = GameChessPieceTypeEnum;
+  const { RED, BLACK } = GameChessPieceColorEnum;
+
+  const row1 = [XE, MÃ, TỊNH, SĨ, TƯỚNG, SĨ, TỊNH, MÃ, XE].map((type) =>
+    createPiece(type, RED),
+  );
   const row2 = Array(9).fill(null);
-  const row3 = [
-    null,
-    { type: GameChessPieceTypeEnum.PHÁO, color: GameChessPieceColorEnum.RED },
-    null,
-    null,
-    null,
-    null,
-    null,
-    { type: GameChessPieceTypeEnum.PHÁO, color: GameChessPieceColorEnum.RED },
-    null,
-  ];
-  const row4 = [
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.RED },
-    null,
-    {
-      type: GameChessPieceTypeEnum.TỐT,
-      color: GameChessPieceColorEnum.RED,
-    },
-    null,
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.RED },
-    null,
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.RED },
-  ];
+  const row3 = [null, PHÁO, null, null, null, null, null, PHÁO, null].map(
+    (type) => (type ? createPiece(type, RED) : null),
+  );
+  const row4 = [TỐT, null, TỐT, null, TỐT, null, TỐT, null, TỐT].map((type) =>
+    type ? createPiece(type, RED) : null,
+  );
   const row5 = Array(9).fill(null);
   const row6 = Array(9).fill(null);
-  const row7 = [
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.BLACK },
-    null,
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.BLACK },
-    null,
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.BLACK },
-    null,
-    { type: GameChessPieceTypeEnum.TỐT, color: GameChessPieceColorEnum.BLACK },
-  ];
-  const row8 = [
-    null,
-    { type: GameChessPieceTypeEnum.PHÁO, color: GameChessPieceColorEnum.BLACK },
-    null,
-    null,
-    null,
-    null,
-    null,
-    { type: GameChessPieceTypeEnum.PHÁO, color: GameChessPieceColorEnum.BLACK },
-    null,
-  ];
+  const row7 = [TỐT, null, TỐT, null, TỐT, null, TỐT, null, TỐT].map((type) =>
+    type ? createPiece(type, BLACK) : null,
+  );
+  const row8 = [null, PHÁO, null, null, null, null, null, PHÁO, null].map(
+    (type) => (type ? createPiece(type, BLACK) : null),
+  );
   const row9 = Array(9).fill(null);
-  const row10 = [
-    { type: GameChessPieceTypeEnum.XE, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.MÃ, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.TỊNH, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.SĨ, color: GameChessPieceColorEnum.BLACK },
-    {
-      type: GameChessPieceTypeEnum.TƯỚNG,
-      color: GameChessPieceColorEnum.BLACK,
-    },
-    { type: GameChessPieceTypeEnum.SĨ, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.TỊNH, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.MÃ, color: GameChessPieceColorEnum.BLACK },
-    { type: GameChessPieceTypeEnum.XE, color: GameChessPieceColorEnum.BLACK },
-  ];
+  const row10 = [XE, MÃ, TỊNH, SĨ, TƯỚNG, SĨ, TỊNH, MÃ, XE].map((type) =>
+    createPiece(type, BLACK),
+  );
+
   return [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10];
 };
 
-const getPointsResultCanMove = (
-  x: number,
-  y: number,
+export const getPointsResultCanMove = (
+  point: Point,
   board: Array<Array<GameChessPiece | null>>,
 ) => {
-  if (x < 0 || x >= 9 || y < 0 || y >= 10) {
+  if (!point) {
     return [];
   }
+  const x = point.x,
+    y = point.y;
+  if (x === null || x === undefined) return [];
+  if (y === null || y === undefined) return [];
 
   const piece = board[x][y];
   if (!piece) {
     return [];
   }
 
+  const { XE, MÃ, TỊNH, SĨ, TƯỚNG, PHÁO, TỐT } = GameChessPieceTypeEnum;
   switch (piece.type) {
-    case GameChessPieceTypeEnum.XE:
-      return getPointsResultCanMoveForXe(x, y, board);
-    case 'MÃ':
-      break;
-    case 'TỊNH':
-      break;
-    case 'SĨ':
-      break;
-    case 'TƯỚNG':
-      break;
-    case 'PHÁO':
-      break;
-    case 'TỐT':
-      break;
+    case XE:
+      return getPointsResultCanMoveForXe({ x, y }, board);
+    case MÃ:
+      return getPointsResultCanMoveForMa({ x, y }, board);
+    case TỊNH:
+      return getPointsResultCanMoveForTinh({ x, y }, board);
+    case SĨ:
+      return getPointsResultCanMoveForSi({ x, y }, board);
+    case TƯỚNG:
+      return getPointsResultCanMoveForTuong({ x, y }, board);
+    case PHÁO:
+      return getPointsResultCanMoveForPhao({ x, y }, board);
+    case TỐT:
+      return getPointsResultCanMoveForTot({ x, y }, board);
     default:
-      return false;
-  }
-  return true;
-};
-
-const getPointsResultCanMoveForXe = (
-  x: number,
-  y: number,
-  board: Array<Array<GameChessPiece | null>>,
-) => {
-  const piece = board[x][y];
-  const color = piece.color;
-  const points = [];
-
-  // top
-  for (let i = x - 1; i >= 0; i--) {
-    if (board[i][y]) {
-      if (board[i][y]?.color !== color) {
-        points.push({ x: i, y });
-      }
-      break;
-    }
-    points.push({ x: i, y });
+      return [];
   }
 };

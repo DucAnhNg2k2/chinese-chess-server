@@ -26,6 +26,8 @@ import { UserGameStatus } from './user/user.interface';
 import { UserGameManager } from './user/user.manager';
 import { GetUserProfileCommand } from 'src/commands/user/get-user-profile.command';
 import { PlayerCancelReadyGameCommand } from 'src/commands/game-manager/player-cancel-ready.command';
+import { MovePieceChessDto } from './dtos/move-piece-chess.dto';
+import { MovePieceGameCommand } from 'src/commands/game-manager/move-piece.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -59,6 +61,7 @@ export class GameManager
   private createRoomCommand: CreateRoomCommand;
   private joinRoomCommand: JoinRoomCommand;
   private leaveRoomCommand: LeaveRoomCommand;
+  private movePieceChessCommand: MovePieceGameCommand;
   private usersQueue: string[] = [];
 
   constructor(
@@ -118,6 +121,14 @@ export class GameManager
       this.gameStateManager,
       this.server,
     );
+    this.movePieceChessCommand = new MovePieceGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
   }
 
   afterInit(server: any) {}
@@ -138,8 +149,7 @@ export class GameManager
       // nếu có hủy kết nối cũ
       const oldSocket = this.userToSocket[user.id];
       if (oldSocket) {
-        delete this.socketToUser[oldSocket.id];
-        oldSocket.disconnect();
+        this.handlerSocketDisconnect(oldSocket);
       }
 
       const userProfile = await this.getUserProfileCommand.execute(user);
@@ -156,6 +166,10 @@ export class GameManager
   }
 
   async handleDisconnect(client: Socket) {
+    return this.handlerSocketDisconnect(client);
+  }
+
+  private handlerSocketDisconnect(client: Socket) {
     const userId = this.socketToUser[client.id];
     if (!userId) {
       return;
@@ -214,6 +228,17 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     const result = await this.leaveRoomCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.MOVE_PIECE)
+  async movePiece(
+    @MessageBody() dto: MovePieceChessDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const result = await this.movePieceChessCommand.execute({
       dto,
       client,
     });
