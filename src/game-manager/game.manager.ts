@@ -149,8 +149,7 @@ export class GameManager
       // nếu có hủy kết nối cũ
       const oldSocket = this.userToSocket[user.id];
       if (oldSocket) {
-        delete this.socketToUser[oldSocket.id];
-        oldSocket.disconnect();
+        this.handlerSocketDisconnect(oldSocket);
       }
 
       const userProfile = await this.getUserProfileCommand.execute(user);
@@ -167,6 +166,10 @@ export class GameManager
   }
 
   async handleDisconnect(client: Socket) {
+    return this.handlerSocketDisconnect(client);
+  }
+
+  private handlerSocketDisconnect(client: Socket) {
     const userId = this.socketToUser[client.id];
     if (!userId) {
       return;

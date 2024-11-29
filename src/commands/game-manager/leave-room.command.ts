@@ -1,15 +1,14 @@
-import { MessageJoinRoomDto } from 'src/game-manager/dtos/message-join-room.dto';
 import { Server, Socket } from 'socket.io';
 import { CommandBase } from 'src/commons/base/command.base';
-import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
-import { UserGameManager } from 'src/game-manager/user/user.manager';
-import { RoomGameManager } from 'src/game-manager/room/room.manager';
-import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { socketEmitError } from 'src/commons/utils/socket-error';
-import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { MessageLeaveRoomDto } from 'src/game-manager/dtos/message-leave-room.dto';
+import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { GameEventClient } from 'src/game-manager/game.event';
+import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
 import { RoomStatus } from 'src/game-manager/room/room.interface';
+import { RoomGameManager } from 'src/game-manager/room/room.manager';
+import { UserGameStatus } from 'src/game-manager/user/user.interface';
+import { UserGameManager } from 'src/game-manager/user/user.manager';
 
 export interface LeaveRoomCommandPayload {
   dto: MessageLeaveRoomDto;
@@ -42,9 +41,6 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
       return socketEmitError(client, 'user-không-ở-trong-room');
     }
 
-    room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
-    user.status = UserGameStatus.ONLINE;
-
     // Kiểm tra xem room đang pending hay playing rồi
     if (room.status === RoomStatus.PENDING) {
       // Nếu phòng không còn ai => xóa bỏ phòng
@@ -58,8 +54,6 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
     }
 
     if (room.status === RoomStatus.PLAYING) {
-      room.status = RoomStatus.PENDING;
-
       const winerId = room.playerIds.find((playerId) => playerId !== userId);
       const loserId = userId;
 
@@ -68,14 +62,20 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
 
       winer.status = UserGameStatus.IN_ROOM;
 
+      room.status = RoomStatus.PENDING;
+      room.ownerId = winerId;
+
       this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
         winer,
         loser,
-        room,
       });
     }
 
+    room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
+    user.status = UserGameStatus.ONLINE;
+
     client.leave(room.id);
+
     // gửi message room cho tất cả người chơi trong room
     this.server
       .to(room.id)
