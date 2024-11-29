@@ -106,17 +106,17 @@ export class MovePieceGameCommand
 
     if (competitorKingInCheck) {
       if (isCheckMate) {
-        const winer = this.userManager.getUserById(currentPlayer);
+        const winner = this.userManager.getUserById(currentPlayer);
         const loser = this.userManager.getUserById(competitor);
 
-        winer.status = UserGameStatus.IN_ROOM;
+        winner.status = UserGameStatus.IN_ROOM;
         loser.status = UserGameStatus.IN_ROOM;
         room.status = RoomStatus.PENDING;
         gameState.gameOver = true;
         gameState.winnerId = currentPlayer;
 
         this.server.to(room.id).emit(GameEventClient.CHECKMATE, {
-          winer,
+          winner,
           loser,
           room,
         });
