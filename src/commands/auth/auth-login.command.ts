@@ -31,7 +31,6 @@ export class AuthLoginCommand implements CommandBase<AuthLoginDto> {
     const { accessToken } = this.jwtCoreService.signAccessToken(user.id);
     user.accessToken = accessToken;
     await this.userRepository.save(user);
-
     return { accessToken };
   }
 }

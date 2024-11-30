@@ -5,6 +5,7 @@ import { Point } from 'src/const/point.const';
 import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
 import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { getPointsResultCanMove } from 'src/game-manager/game-state/game-state.util';
+import { isCheckMate } from 'src/game-manager/game-state/utils/is-checkmate';
 import { isKingInCheck } from 'src/game-manager/game-state/utils/is-kingincheck';
 import { GameEventClient } from 'src/game-manager/game.event';
 import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
@@ -97,7 +98,7 @@ export class MovePieceGameCommand
     board[fromX][fromY] = null;
 
     // xem hết cờ chưa
-    let isCheckMate = false;
+    let competitorIsCheckMate = false;
     // xem đối thủ bị chiếu tướng hay không
     const competitorKingInCheck = isKingInCheck(
       board,
@@ -106,8 +107,12 @@ export class MovePieceGameCommand
 
     if (competitorKingInCheck) {
       // xem đối thủ có hết cờ không
+      const competitorIsCheckMate = isCheckMate(
+        board,
+        gameState.playerIdToColorMap[competitor],
+      );
 
-      if (isCheckMate) {
+      if (competitorIsCheckMate) {
         const winner = this.userManager.getUserById(currentPlayer);
         const loser = this.userManager.getUserById(competitor);
 
@@ -139,6 +144,7 @@ export class MovePieceGameCommand
       toX,
       toY,
       piece,
+      currentPlayerId: competitor,
     });
   }
 }
