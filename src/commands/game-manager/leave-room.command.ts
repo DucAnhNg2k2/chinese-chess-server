@@ -44,29 +44,29 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
     // Kiểm tra xem room đang pending hay playing rồi
     if (room.status === RoomStatus.PENDING) {
       // Nếu phòng không còn ai => xóa bỏ phòng
-      if (room.playerIds.length === 0) {
+      if (room.playerIds.length === 1) {
         this.roomManager.deleteRoom(room.id);
       }
       // Nếu phòng còn người => nhường lại chủ phòng
       else {
-        room.ownerId = room.playerIds[0];
+        room.ownerId = room.playerIds.find((playerId) => playerId !== userId);
       }
     }
 
     if (room.status === RoomStatus.PLAYING) {
-      const winerId = room.playerIds.find((playerId) => playerId !== userId);
+      const winnerId = room.playerIds.find((playerId) => playerId !== userId);
       const loserId = userId;
 
-      const winer = this.userManager.getUserById(winerId);
+      const winner = this.userManager.getUserById(winnerId);
       const loser = this.userManager.getUserById(loserId);
 
-      winer.status = UserGameStatus.IN_ROOM;
+      winner.status = UserGameStatus.IN_ROOM;
 
       room.status = RoomStatus.PENDING;
-      room.ownerId = winerId;
+      room.ownerId = winnerId;
 
       this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
-        winer,
+        winner,
         loser,
       });
     }
