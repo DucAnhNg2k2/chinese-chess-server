@@ -105,6 +105,8 @@ export class MovePieceGameCommand
     );
 
     if (competitorKingInCheck) {
+      // xem đối thủ có hết cờ không
+
       if (isCheckMate) {
         const winner = this.userManager.getUserById(currentPlayer);
         const loser = this.userManager.getUserById(competitor);
