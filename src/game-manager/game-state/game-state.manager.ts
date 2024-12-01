@@ -61,4 +61,11 @@ export class GameStateManager {
   deleteById(id: string) {
     delete this.gameStates[id];
   }
+
+  deleteByRoomId(roomId: string) {
+    const gameState = this.getGameStateByRoomId(roomId);
+    if (gameState) {
+      delete this.gameStates[gameState.gameId];
+    }
+  }
 }

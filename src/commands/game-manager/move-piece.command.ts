@@ -122,7 +122,7 @@ export class MovePieceGameCommand
         gameState.gameOver = true;
         gameState.winnerId = currentPlayer;
 
-        this.server.to(room.id).emit(GameEventClient.CHECKMATE, {
+        this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
           winner,
           loser,
           room,

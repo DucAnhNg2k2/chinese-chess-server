@@ -74,6 +74,9 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
     room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
     user.status = UserGameStatus.ONLINE;
 
+    // Clear game state của room
+    this.gameStateManager.deleteByRoomId(room.id);
+
     client.leave(room.id);
 
     // gửi message room cho tất cả người chơi trong room
