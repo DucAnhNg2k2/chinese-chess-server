@@ -6,6 +6,7 @@ import {
 import { Public } from 'src/commons/decorators/public-endpoint.decorator';
 import { GameStateManager } from './game-state/game-state.manager';
 import { GetValidMoveChessDto } from './dtos/get-valid-move.dto';
+import { isKingInCheck } from './game-state/utils/is-kingincheck';
 
 @Controller('games-dev')
 export class GameControllerDev {
@@ -30,6 +31,19 @@ export class GameControllerDev {
     @Query() dto: GetValidMoveChessDto,
   ) {
     const gameState = this.gameStateManager.getById(id);
-    return getPointsResultCanMove({ x: +dto.x, y: +dto.y }, gameState.board);
+    return getPointsResultCanMove(
+      { x: +dto.x, y: +dto.y },
+      gameState.board,
+      true,
+    );
+  }
+
+  @Get('king-in-check/:boardId')
+  @Public()
+  checkKingInCheckDev(@Param('boardId') id: string) {
+    const gameState = this.gameStateManager.getById(id);
+    return gameState.playerIds.map((id) => {
+      return isKingInCheck(gameState.board, gameState.playerIdToColorMap[id]);
+    });
   }
 }

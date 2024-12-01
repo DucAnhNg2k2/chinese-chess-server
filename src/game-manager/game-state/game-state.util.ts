@@ -61,6 +61,7 @@ export const initGameStateBoard = (): Array<Array<GameChessPiece | null>> => {
 export const getPointsResultCanMove = (
   point: Point,
   board: Array<Array<GameChessPiece | null>>,
+  logging = false,
 ) => {
   if (!point) {
     return [];
@@ -96,7 +97,7 @@ export const getPointsResultCanMove = (
     case TƯỚNG:
       return getPointsResultCanMoveForTuong({ x, y }, board);
     case PHÁO:
-      return getPointsResultCanMoveForPhao({ x, y }, board);
+      return getPointsResultCanMoveForPhao({ x, y }, board, logging);
     case TỐT:
       return getPointsResultCanMoveForTot({ x, y }, board);
     default:

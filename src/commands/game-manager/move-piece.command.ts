@@ -85,17 +85,22 @@ export class MovePieceGameCommand
         ? gameState.playerIds[1]
         : gameState.playerIds[0];
 
+    // Lưu lại state trước khi thay đổi, để nếu hở tướng thì rollback
+    const pieceBeforeMove = board[toX][toY];
+    board[toX][toY] = piece;
+    board[fromX][fromY] = null;
+
     // check xem nước đi hở tướng hay không
     const currentIsKingInCheck = isKingInCheck(
       board,
       gameState.playerIdToColorMap[currentPlayer],
     );
     if (currentIsKingInCheck) {
+      // rollback
+      board[toX][toY] = pieceBeforeMove;
+      board[fromX][fromY] = piece;
       return socketEmitError(client, 'Nước đi hở tướng');
     }
-
-    board[toX][toY] = piece;
-    board[fromX][fromY] = null;
 
     // xem hết cờ chưa
     let competitorIsCheckMate = false;

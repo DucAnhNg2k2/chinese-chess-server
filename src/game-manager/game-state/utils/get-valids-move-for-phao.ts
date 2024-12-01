@@ -4,6 +4,7 @@ import { GameChessPiece } from '../game-state.interface';
 export const getPointsResultCanMoveForPhao = (
   point: Point,
   board: Array<Array<GameChessPiece | null>>,
+  logging: boolean = false,
 ): Array<Point> => {
   const validMoves: Array<Point> = [];
   const directions = [
@@ -12,6 +13,7 @@ export const getPointsResultCanMoveForPhao = (
     { dx: 1, dy: 0 }, // Đi phải
     { dx: -1, dy: 0 }, // Đi trái
   ];
+  if (logging) console.log('Pháo:', point);
 
   directions.forEach(({ dx, dy }) => {
     let x = point.x + dx;
@@ -44,6 +46,7 @@ export const getPointsResultCanMoveForPhao = (
       y += dy;
     }
   });
+  if (logging) console.log('Valid moves:', validMoves);
 
   return validMoves;
 };
