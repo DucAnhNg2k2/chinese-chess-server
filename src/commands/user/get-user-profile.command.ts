@@ -22,6 +22,7 @@ export class GetUserProfileCommand implements CommandBase<UserReq> {
       fullName: data?.fullName ?? '',
       address: data?.address ?? '',
       phoneNumber: data?.phoneNumber ?? '',
+      avatar: data?.avatar ?? '',
     });
   }
 }

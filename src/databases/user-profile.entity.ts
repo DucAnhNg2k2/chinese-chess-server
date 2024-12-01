@@ -26,4 +26,7 @@ export class UserProfileEntity extends BaseModal<UserProfileEntity> {
 
   @Column({ name: 'address', nullable: false })
   address: string;
+
+  @Column({ name: 'avatar', nullable: true, length: 1024 })
+  avatar: string;
 }

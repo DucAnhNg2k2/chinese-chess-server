@@ -57,4 +57,8 @@ export class GameStateManager {
   getById(id: string) {
     return this.gameStates[id];
   }
+
+  deleteById(id: string) {
+    delete this.gameStates[id];
+  }
 }
