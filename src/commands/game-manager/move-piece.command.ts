@@ -130,7 +130,11 @@ export class MovePieceGameCommand
       }
       // chưa hết cờ
       else {
-        this.server.to(room.id).emit(GameEventClient.KING_IN_CHECK, {});
+        this.server.to(room.id).emit(GameEventClient.KING_IN_CHECK, {
+          x: competitorKingInCheck.x,
+          y: competitorKingInCheck.y,
+          piece: competitorKingInCheck.piece,
+        });
       }
     }
 

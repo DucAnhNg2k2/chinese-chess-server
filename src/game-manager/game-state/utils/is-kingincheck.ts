@@ -9,7 +9,7 @@ import { findKingPosition } from './find-king-position';
 export const isKingInCheck = (
   board: Array<Array<GameChessPiece | null>>,
   currentPlayerColor: GameChessPieceColorEnum,
-): boolean => {
+) => {
   const kingPosition = findKingPosition(board, currentPlayerColor);
   const kingX = kingPosition.x,
     kingY = kingPosition.y;
@@ -27,7 +27,7 @@ export const isKingInCheck = (
         if (
           validMoves.some((point) => point.x === kingX && point.y === kingY)
         ) {
-          return true;
+          return { x, y, piece: board[kingX][kingY] };
         }
       }
     }
