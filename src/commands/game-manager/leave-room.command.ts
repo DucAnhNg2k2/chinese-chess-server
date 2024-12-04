@@ -69,6 +69,12 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
         winner,
         loser,
       });
+      this.server
+        .to(room.id)
+        .emit(
+          GameEventClient.ROOM_INFORMATION,
+          this.roomManager.getRoomInfo(room.id),
+        );
     }
 
     room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
