@@ -91,12 +91,11 @@ export class PlayerReadyGameCommand
         currentPlayerId,
         playerIds,
       );
+      this.gameStateManager.deleteByRoomId(room.id);
       const emitGameState: any = { ...newGameState };
       delete emitGameState.board;
       // chuyển thành mảng 1 chiều
       emitGameState.board = convertTo1D(newGameState.board);
-
-      this.gameStateManager.deleteById(oldGameState.gameId);
 
       // Gửi thông báo bắt đầu game
       this.server.to(room.id).emit(GameEventClient.START_GAME, emitGameState);
