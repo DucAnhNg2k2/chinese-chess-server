@@ -53,6 +53,7 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
       }
     }
 
+    let isGameOver = false;
     if (room.status === RoomStatus.PLAYING) {
       const winnerId = room.playerIds.find((playerId) => playerId !== userId);
       const loserId = userId;
@@ -65,16 +66,11 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
       room.status = RoomStatus.PENDING;
       room.ownerId = winnerId;
 
+      isGameOver = true;
       this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
         winner,
         loser,
       });
-      this.server
-        .to(room.id)
-        .emit(
-          GameEventClient.ROOM_INFORMATION,
-          this.roomManager.getRoomInfo(room.id),
-        );
     }
 
     room.playerIds = room.playerIds.filter((playerId) => playerId !== userId);
@@ -92,5 +88,14 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
         GameEventClient.PLAYER_LEAVE_ROOM,
         this.userManager.getUserById(userId),
       );
+
+    if (isGameOver) {
+      this.server
+        .to(room.id)
+        .emit(
+          GameEventClient.ROOM_INFORMATION,
+          this.roomManager.getRoomInfo(room.id),
+        );
+    }
   }
 }
