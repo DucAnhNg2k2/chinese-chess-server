@@ -49,6 +49,9 @@ export class MovePieceGameCommand
     if (!gameState) {
       return socketEmitError(client, 'game-state-không-tồn-tại');
     }
+
+    console.log('[MovePieceGameCommand] gameState', gameState, userId);
+
     if (gameState.currentPlayerId !== userId) {
       return socketEmitError(client, 'không-phải-lượt-của-bạn');
     }
