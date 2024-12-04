@@ -76,6 +76,7 @@ export class PlayerReadyGameCommand
       if (oldGameState) {
         oldGameState.gameOver = true;
         winnerId = oldGameState.winnerId;
+        this.gameStateManager.deleteByRoomId(room.id);
       }
 
       // Tạo game mới
@@ -91,7 +92,7 @@ export class PlayerReadyGameCommand
         currentPlayerId,
         playerIds,
       );
-      this.gameStateManager.deleteByRoomId(room.id);
+
       const emitGameState: any = { ...newGameState };
       delete emitGameState.board;
       // chuyển thành mảng 1 chiều
