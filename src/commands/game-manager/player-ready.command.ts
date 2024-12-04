@@ -93,8 +93,10 @@ export class PlayerReadyGameCommand
       );
       const emitGameState: any = { ...newGameState };
       delete emitGameState.board;
-      // chuyển thành mản 1 chiều
+      // chuyển thành mảng 1 chiều
       emitGameState.board = convertTo1D(newGameState.board);
+
+      this.gameStateManager.deleteById(oldGameState.gameId);
 
       // Gửi thông báo bắt đầu game
       this.server.to(room.id).emit(GameEventClient.START_GAME, emitGameState);
