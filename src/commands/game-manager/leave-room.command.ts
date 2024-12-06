@@ -86,6 +86,7 @@ export class LeaveRoomCommand
       // hết cờ. lưu lại history vào database. add vào queue
       // todo ... add to queue
       const gameState = this.gameStateManager.getGameStateByRoomId(room.id);
+      gameState.endTime = new Date();
       await this.saveGameHistoryCommand.execute({
         dto: {
           gameHistory: new GameHistoryEntity({
