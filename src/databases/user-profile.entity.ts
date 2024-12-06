@@ -1,12 +1,5 @@
 import { BaseModal } from 'src/commons/base/modal.base';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('user_profiles')
@@ -29,4 +22,13 @@ export class UserProfileEntity extends BaseModal<UserProfileEntity> {
 
   @Column({ name: 'avatar', nullable: true, length: 1024 })
   avatar: string;
+
+  @Column({ name: 'total_wins', default: 0 })
+  totalWins: number;
+
+  @Column({ name: 'total_loses', default: 0 })
+  totalLoses: number;
+
+  @Column({ name: 'total_games', default: 0 })
+  totalGames: number;
 }
