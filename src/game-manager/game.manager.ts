@@ -197,7 +197,7 @@ export class GameManager
     @MessageBody() body: MessageCreateRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[CREATE_ROOM]', body);
+    // console.log('[CREATE_ROOM]', body);
     const room: Room = await this.createRoomCommand.execute({ client });
   }
 
@@ -206,7 +206,7 @@ export class GameManager
     @MessageBody() dto: MessageJoinRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[JOIN_ROOM]', dto);
+    // console.log('[JOIN_ROOM]', dto);
     const room: Room = await this.joinRoomCommand.execute({
       dto,
       client,
@@ -218,7 +218,7 @@ export class GameManager
     @MessageBody() dto: MessagePlayerReadyGameDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[PLAYER_READY]', dto);
+    // console.log('[PLAYER_READY]', dto);
     const result = await this.playerReadyGameCommand.execute({
       dto,
       client,
@@ -230,7 +230,6 @@ export class GameManager
     @MessageBody() dto: MessagePlayerReadyGameDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[PLAYER_CANCEL_READY]', dto);
     const result = await this.playerCancelReadyGameCommand.execute({
       dto,
       client,
@@ -242,7 +241,7 @@ export class GameManager
     @MessageBody() dto: MessageJoinRoomDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[LEAVE_ROOM]', dto);
+    // console.log('[LEAVE_ROOM]', dto);
     const result = await this.leaveRoomCommand.execute({
       dto,
       client,
@@ -254,7 +253,7 @@ export class GameManager
     @MessageBody() dto: MovePieceChessDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[MOVE_PIECE]', dto);
+    // console.log('[MOVE_PIECE]', dto);
     const result = await this.movePieceChessCommand.execute({
       dto,
       client,
@@ -266,7 +265,7 @@ export class GameManager
     @MessageBody() dto: GetValidMoveChessDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('[GET_VALID_MOVES]', dto);
+    // console.log('[GET_VALID_MOVES]', dto);
     return this.getValidMovesCommand.execute({
       dto,
       client,

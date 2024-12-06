@@ -1,7 +1,9 @@
+import { OnModuleInit } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { CommandBase } from 'src/commons/base/command.base';
 import { socketEmitError } from 'src/commons/utils/socket-error';
 import { Point } from 'src/const/point.const';
+import { GameHistoryEntity } from 'src/databases/game-history.entity';
 import { MovePieceChessDto } from 'src/game-manager/dtos/move-piece-chess.dto';
 import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { getPointsResultCanMove } from 'src/game-manager/game-state/game-state.util';
@@ -13,6 +15,7 @@ import { RoomStatus } from 'src/game-manager/room/room.interface';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
+import { SaveGameHistoryCommand } from './save-game-history.command';
 
 export interface MovePieceGameCommandPayload {
   dto: MovePieceChessDto;
@@ -20,8 +23,10 @@ export interface MovePieceGameCommandPayload {
 }
 
 export class MovePieceGameCommand
-  implements CommandBase<MovePieceGameCommandPayload>
+  implements CommandBase<MovePieceGameCommandPayload>, OnModuleInit
 {
+  private saveGameHistoryCommand: SaveGameHistoryCommand;
+
   constructor(
     private readonly userToSocket: UserToSocket,
     private readonly socketToUser: SocketToUser,
@@ -30,6 +35,10 @@ export class MovePieceGameCommand
     private gameStateManager: GameStateManager,
     private server: Server,
   ) {}
+
+  onModuleInit() {
+    this.saveGameHistoryCommand = new SaveGameHistoryCommand();
+  }
 
   async execute(payload: MovePieceGameCommandPayload) {
     const { dto, client } = payload;
@@ -49,8 +58,6 @@ export class MovePieceGameCommand
     if (!gameState) {
       return socketEmitError(client, 'game-state-không-tồn-tại');
     }
-
-    console.log('[MovePieceGameCommand] gameState', gameState, userId);
 
     if (gameState.currentPlayerId !== userId) {
       return socketEmitError(client, 'không-phải-lượt-của-bạn');
@@ -127,6 +134,7 @@ export class MovePieceGameCommand
         room.status = RoomStatus.PENDING;
         gameState.gameOver = true;
         gameState.winnerId = currentPlayer;
+        gameState.endTime = new Date();
 
         this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
           winner,
@@ -138,6 +146,23 @@ export class MovePieceGameCommand
             GameEventClient.ROOM_INFORMATION,
             this.roomManager.getRoomInfo(room.id),
           );
+
+        // todo ... add to queue
+        await this.saveGameHistoryCommand.execute({
+          dto: {
+            gameHistory: new GameHistoryEntity({
+              roomId: room.id,
+              gameId: gameState.gameId,
+              player1Id: gameState.playerIds[0],
+              player2Id: gameState.playerIds[1],
+              winnerId: winner.id,
+              startTime: gameState.startTime,
+              endTime: gameState.endTime,
+            }),
+            gameMove: [],
+          },
+        });
+
         return;
       }
       // chưa hết cờ

@@ -1,11 +1,10 @@
-import { CommandBase } from 'src/commons/base/command.base';
 import { Server, Socket } from 'socket.io';
+import { CommandBase } from 'src/commons/base/command.base';
+import { socketEmitError } from 'src/commons/utils/socket-error';
+import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
 import { SocketToUser, UserToSocket } from 'src/game-manager/game.manager';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
-import { GameStateManager } from 'src/game-manager/game-state/game-state.manager';
-import { GameEventClient } from 'src/game-manager/game.event';
-import { socketEmitError } from 'src/commons/utils/socket-error';
 
 export interface FindRoomCommandPayload {
   client: Socket;
