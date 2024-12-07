@@ -9,13 +9,20 @@ import { RoomStatus } from 'src/game-manager/room/room.interface';
 import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
+import { SaveGameHistoryCommand } from './save-game-history.command';
+import { OnModuleInit } from '@nestjs/common';
+import { GameHistoryEntity } from 'src/databases/game-history.entity';
 
 export interface LeaveRoomCommandPayload {
   dto: MessageLeaveRoomDto;
   client: Socket;
 }
 
-export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
+export class LeaveRoomCommand
+  implements CommandBase<LeaveRoomCommandPayload>, OnModuleInit
+{
+  private saveGameHistoryCommand: SaveGameHistoryCommand;
+
   constructor(
     private readonly userToSocket: UserToSocket,
     private readonly socketToUser: SocketToUser,
@@ -24,6 +31,10 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
     private gameStateManager: GameStateManager,
     private server: Server,
   ) {}
+
+  onModuleInit() {
+    this.saveGameHistoryCommand = new SaveGameHistoryCommand();
+  }
 
   async execute(payload: LeaveRoomCommandPayload) {
     const { dto, client } = payload;
@@ -70,6 +81,25 @@ export class LeaveRoomCommand implements CommandBase<LeaveRoomCommandPayload> {
       this.server.to(room.id).emit(GameEventClient.GAME_OVER, {
         winner,
         loser,
+      });
+
+      // hết cờ. lưu lại history vào database. add vào queue
+      // todo ... add to queue
+      const gameState = this.gameStateManager.getGameStateByRoomId(room.id);
+      gameState.endTime = new Date();
+      await this.saveGameHistoryCommand.execute({
+        dto: {
+          gameHistory: new GameHistoryEntity({
+            roomId: room.id,
+            gameId: gameState.gameId,
+            player1Id: gameState.playerIds[0],
+            player2Id: gameState.playerIds[1],
+            winnerId: winner.id,
+            startTime: gameState.startTime,
+            endTime: gameState.endTime,
+          }),
+          gameMove: [],
+        },
       });
     }
 

@@ -6,6 +6,8 @@ export interface GameState {
   board: Array<Array<GameChessPiece | null>>;
   gameOver: boolean;
   winnerId?: string;
+  startTime: Date;
+  endTime: Date;
   playerIdToColorMap: {
     [playerId: string]: GameChessPieceColorEnum;
   };

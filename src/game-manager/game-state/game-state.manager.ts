@@ -38,6 +38,8 @@ export class GameStateManager {
         [playerIds.find((id) => id !== currentPlayerId)]:
           GameChessPieceColorEnum.BLACK,
       },
+      startTime: new Date(),
+      endTime: null,
     };
     this.gameStates[gameId] = newGame;
     return newGame;

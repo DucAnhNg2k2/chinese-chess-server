@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthMiddleware } from './commons/middlewares/auth.middleware';
 import { AuthGuard } from './commons/guards/auth.guard';
 import { GameModule } from './game-manager/game.module';
+import { GameHistoryModule } from './modules/game-history/game-history.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { GameModule } from './game-manager/game.module';
     AuthModule,
     UserModule,
     GameModule,
+    GameHistoryModule,
   ],
   controllers: [AppController],
   providers: [
