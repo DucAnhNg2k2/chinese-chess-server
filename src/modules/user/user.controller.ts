@@ -52,13 +52,14 @@ export class UserController {
   }
 
   @Get('friend')
-  getFriends(@User() user: UserReq) {
-    return this.getFriendCommand.execute({ user });
+  async getFriends(@User() user: UserReq) {
+    const result = await this.getFriendCommand.execute({ user });
+    return result.map((item) => item.friend);
   }
 
   @Delete('friend')
   deleteFriend(@User() user: UserReq, @Body() dto: UnFriendDto) {
-    return this.addFriendCommand.execute({
+    return this.unFriendCommand.execute({
       user,
       friendId: dto.friendId,
     });

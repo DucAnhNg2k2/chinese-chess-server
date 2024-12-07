@@ -27,6 +27,8 @@ export class UnFriendCommand implements CommandBase<UnFriendCommandPayload> {
     if (!userFriend) {
       throw new NotFoundException('Không tìm thấy bạn bè');
     }
-    return this.userFiendRepository.remove(userFriend);
+
+    await this.userFiendRepository.delete(userFriend.id);
+    return true;
   }
 }
