@@ -6,12 +6,16 @@ import { GetUserProfileCommand } from './get-user-profile.command';
 import { GetListUserCommand } from './get-list-user.command';
 import { UserFriendEntity } from 'src/databases/user-friend.entity';
 import { AddFriendCommand } from './add-friend.command';
+import { GetFriendCommand } from './get-friend.command';
+import { UnFriendCommand } from './un-friend.command';
 
 const commands = [
   UpdateUserProfileCommand,
   GetUserProfileCommand,
   GetListUserCommand,
   AddFriendCommand,
+  GetFriendCommand,
+  UnFriendCommand,
 ];
 
 @Module({

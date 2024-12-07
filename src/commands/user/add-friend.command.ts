@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommandBase } from 'src/commons/base/command.base';
 import { UserReq } from 'src/commons/UserReq';
@@ -18,7 +18,21 @@ export class AddFriendCommand implements CommandBase<AddFriendCommandPayload> {
   ) {}
 
   async execute(dto: AddFriendCommandPayload) {
-    const userFriend = new UserFriendEntity({
+    if (+dto.user.id === +dto.friendId) {
+      throw new BadRequestException('bạn không thể kết bạn với chính mình');
+    }
+
+    let userFriend = await this.userFiendRepository.findOne({
+      where: {
+        userId: dto.user.id,
+        friendId: dto.friendId,
+      },
+    });
+    if (userFriend) {
+      return userFriend;
+    }
+
+    userFriend = new UserFriendEntity({
       userId: dto.user.id,
       friendId: dto.friendId,
     });

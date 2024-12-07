@@ -21,11 +21,14 @@ export class GetListUserCommand
 
   async execute(dto: GetUserProfileCommandPayload) {
     const qb = this.userProfileRepository.createQueryBuilder('userProfile');
+    qb.andWhere('userProfile.userId != :userId', { userId: dto.user.id });
+
     if (dto.phoneNumber) {
       qb.andWhere('userProfile.phoneNumber like :phoneNumber', {
         phoneNumber: dto.phoneNumber,
       });
     }
+
     return qb.getMany();
   }
 }
