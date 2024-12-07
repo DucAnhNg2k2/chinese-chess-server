@@ -5,6 +5,8 @@ import { User } from 'src/commons/decorators/user.decorator';
 import { UserReq } from 'src/commons/UserReq';
 import { UpdateUserProfileDto } from './dtos/update-user-profile.dto';
 import { GetListUserCommand } from 'src/commands/user/get-list-user.command';
+import { AddFriendCommand } from 'src/commands/user/add-friend.command';
+import { AddFriendDto } from './dtos/add-friend.dto';
 
 @Controller('users')
 export class UserController {
@@ -12,6 +14,7 @@ export class UserController {
     private updateUserProfileCommand: UpdateUserProfileCommand,
     private getUserProfileCommand: GetUserProfileCommand,
     private getListUserCommand: GetListUserCommand,
+    private addFriendCommand: AddFriendCommand,
   ) {}
 
   @Get('')
@@ -36,7 +39,10 @@ export class UserController {
   }
 
   @Post('add-friend')
-  async addFriend(@User() user: UserReq, @Body() dto: { friendId: string }) {
-    return this.updateUserProfileCommand.addFriend(user, dto.friendId);
+  async addFriend(@User() user: UserReq, @Body() dto: AddFriendDto) {
+    return this.addFriendCommand.execute({
+      user,
+      friendId: dto.friendId,
+    });
   }
 }
