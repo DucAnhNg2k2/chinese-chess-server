@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { GameHistoryService } from './game-history.service';
 import { User } from 'src/commons/decorators/user.decorator';
 import { UserReq } from 'src/commons/UserReq';
@@ -12,8 +12,8 @@ export class GameHistoryController {
     return this.gameHistoryService.list(user);
   }
 
-  // @Get(':id')
-  // get(@User() user: UserReq) {
-  //   return this.gameHistoryService.get(user);
-  // }
+  @Get(':id')
+  get(@User() user: UserReq, @Param('id') id: string) {
+    return this.gameHistoryService.getById(user, id);
+  }
 }

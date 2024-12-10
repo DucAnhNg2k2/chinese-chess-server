@@ -17,5 +17,19 @@ export class GameHistoryService {
     return data;
   }
 
-  // async getById
+  async getById(userReq: UserReq, id: string) {
+    const qb = this.gameHistoryRepository
+      .createQueryBuilder('gameHistory')
+      .leftJoinAndSelect('gameHistory.gameMoves', 'gameMoves')
+      .andWhere('gameHistory.id = :id', { id });
+
+    const data = await qb.getOne();
+    data.gameMoves.forEach((gameMove) => {
+      delete gameMove['gameHistoryId'];
+      delete gameMove['id'];
+      delete gameMove['playerId'];
+      delete gameMove['piece'];
+    });
+    return data;
+  }
 }
