@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -16,7 +17,7 @@ export class GameHistoryEntity extends BaseModal<GameHistoryEntity> {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ name: 'game_id', nullable: false, length: 255, unique: true })
+  @Column({ name: 'game_id', nullable: false, length: 255 })
   gameId: string;
 
   @Column({ name: 'room_id', nullable: false, length: 255 })
@@ -27,6 +28,12 @@ export class GameHistoryEntity extends BaseModal<GameHistoryEntity> {
 
   @Column({ name: 'player2_id', nullable: false })
   player2Id: string;
+
+  @Column({ name: 'player1_color', nullable: false })
+  player1Color: string;
+
+  @Column({ name: 'player2_color', nullable: false })
+  player2Color: string;
 
   @Column({ name: 'winner_id' })
   winnerId: string;

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import {
   GameChessPieceColorEnum,
   GameState,
   GameStateMap,
+  GameStateTraceMove,
 } from './game-state.interface';
 import { initGameStateBoard } from './game-state.util';
 
@@ -25,7 +25,7 @@ export class GameStateManager {
     currentPlayerId: string,
     playerIds: string[],
   ) {
-    const gameId = randomUUID();
+    const gameId = generateRandom6Digits();
     const newGame: GameState = {
       gameId,
       roomId,
@@ -40,6 +40,7 @@ export class GameStateManager {
       },
       startTime: new Date(),
       endTime: null,
+      traceMoves: [],
     };
     this.gameStates[gameId] = newGame;
     return newGame;
@@ -69,5 +70,10 @@ export class GameStateManager {
     if (gameState) {
       delete this.gameStates[gameState.gameId];
     }
+  }
+
+  saveTraceMove(gameStateId: string, traceMove: GameStateTraceMove) {
+    const gameState = this.gameStates[gameStateId];
+    gameState.traceMoves.push(traceMove);
   }
 }

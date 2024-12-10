@@ -16,10 +16,10 @@ export class SaveGameHistoryCommand
 {
   constructor(private dataSource: DataSource) {}
 
-  async execute(dto: SaveGameHistoryCommandPayload): Promise<boolean> {
-    await this.dataSource.transaction(async (manager) => {
+  async execute(dto: SaveGameHistoryCommandPayload): Promise<any> {
+    return this.dataSource.transaction(async (manager) => {
       await manager.save(GameHistoryEntity, dto.gameHistory);
+      await manager.save(GameHistoryEntity, dto.gameMove);
     });
-    return true;
   }
 }

@@ -7,9 +7,10 @@ import {
 } from 'typeorm';
 import { GameHistoryEntity } from './game-history.entity';
 import { UserEntity } from './user.entity';
+import { BaseModal } from 'src/commons/base/modal.base';
 
 @Entity('game_moves')
-export class GameMoveEntity {
+export class GameMoveEntity extends BaseModal<GameMoveEntity> {
   @PrimaryGeneratedColumn()
   id: string;
 

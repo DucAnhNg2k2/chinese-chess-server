@@ -16,6 +16,7 @@ import { RoomGameManager } from 'src/game-manager/room/room.manager';
 import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
 import { SaveGameHistoryCommand } from './save-game-history.command';
+import { GameMoveEntity } from 'src/databases/game-move.entity';
 
 export interface MovePieceGameCommandPayload {
   dto: MovePieceChessDto;
@@ -109,6 +110,16 @@ export class MovePieceGameCommand
       return socketEmitError(client, 'Nước đi hở tướng');
     }
 
+    // lưu lại nước đi
+    this.gameStateManager.saveTraceMove(gameState.gameId, {
+      fromX,
+      fromY,
+      toX,
+      toY,
+      playerId: currentPlayer,
+      piece,
+    });
+
     // xem đối thủ bị chiếu tướng hay không
     const competitorKingInCheck = isKingInCheck(
       board,
@@ -154,8 +165,20 @@ export class MovePieceGameCommand
             winnerId: winner.id,
             startTime: gameState.startTime,
             endTime: gameState.endTime,
+            player1Color: gameState.playerIdToColorMap[gameState.playerIds[0]],
+            player2Color: gameState.playerIdToColorMap[gameState.playerIds[1]],
           }),
-          gameMove: [],
+          gameMove: gameState.traceMoves.map((move) => {
+            return new GameMoveEntity({
+              gameHistoryId: gameState.gameId,
+              playerId: move.playerId,
+              fromX: move.fromX,
+              fromY: move.fromY,
+              toX: move.toX,
+              toY: move.toY,
+              piece: move.piece,
+            });
+          }),
         });
 
         return;

@@ -1,3 +1,12 @@
+export interface GameStateTraceMove {
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  playerId: string;
+  piece: GameChessPiece;
+}
+
 export interface GameState {
   gameId: string;
   roomId: string;
@@ -11,6 +20,7 @@ export interface GameState {
   playerIdToColorMap: {
     [playerId: string]: GameChessPieceColorEnum;
   };
+  traceMoves: Array<GameStateTraceMove>;
 }
 
 export interface GameStateMap {
