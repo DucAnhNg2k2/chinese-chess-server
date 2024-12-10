@@ -6,6 +6,7 @@ import {
   GameStateTraceMove,
 } from './game-state.interface';
 import { initGameStateBoard } from './game-state.util';
+import { generateRandom6Digits } from 'src/commons/utils/random';
 
 // chinese-board
 @Injectable()
