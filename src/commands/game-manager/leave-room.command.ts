@@ -99,7 +99,6 @@ export class LeaveRoomCommand
         }),
         gameMove: gameState.traceMoves.map((move) => {
           return new GameMoveEntity({
-            gameHistoryId: gameState.gameId,
             playerId: move.playerId,
             fromX: move.fromX,
             fromY: move.fromY,

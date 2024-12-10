@@ -18,10 +18,15 @@ export class SaveGameHistoryCommand
   constructor(private dataSource: DataSource) {}
 
   async execute(dto: SaveGameHistoryCommandPayload): Promise<any> {
-    console.log(dto, 'dto');
-
     return this.dataSource.transaction(async (manager) => {
-      await manager.save(GameHistoryEntity, dto.gameHistory);
+      const gameHistory = await manager.save(
+        GameHistoryEntity,
+        dto.gameHistory,
+      );
+      // update gameHistoryId for gameMove
+      dto.gameMove.forEach((move) => {
+        move.gameHistoryId = gameHistory.id;
+      });
       await manager.save(GameMoveEntity, dto.gameMove);
     });
   }

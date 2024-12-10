@@ -16,4 +16,6 @@ export class GameHistoryService {
     const data = await qb.getMany();
     return data;
   }
+
+  // async getById
 }

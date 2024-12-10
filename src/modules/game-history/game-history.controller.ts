@@ -11,4 +11,9 @@ export class GameHistoryController {
   list(@User() user: UserReq) {
     return this.gameHistoryService.list(user);
   }
+
+  // @Get(':id')
+  // get(@User() user: UserReq) {
+  //   return this.gameHistoryService.get(user);
+  // }
 }
