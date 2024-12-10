@@ -25,8 +25,6 @@ export interface MovePieceGameCommandPayload {
 export class MovePieceGameCommand
   implements CommandBase<MovePieceGameCommandPayload>, OnModuleInit
 {
-  private saveGameHistoryCommand: SaveGameHistoryCommand;
-
   constructor(
     private readonly userToSocket: UserToSocket,
     private readonly socketToUser: SocketToUser,
@@ -34,11 +32,10 @@ export class MovePieceGameCommand
     private roomManager: RoomGameManager,
     private gameStateManager: GameStateManager,
     private server: Server,
+    private readonly saveGameHistoryCommand: SaveGameHistoryCommand,
   ) {}
 
-  onModuleInit() {
-    this.saveGameHistoryCommand = new SaveGameHistoryCommand();
-  }
+  onModuleInit() {}
 
   async execute(payload: MovePieceGameCommandPayload) {
     const { dto, client } = payload;
@@ -149,18 +146,16 @@ export class MovePieceGameCommand
 
         // todo ... add to queue
         await this.saveGameHistoryCommand.execute({
-          dto: {
-            gameHistory: new GameHistoryEntity({
-              roomId: room.id,
-              gameId: gameState.gameId,
-              player1Id: gameState.playerIds[0],
-              player2Id: gameState.playerIds[1],
-              winnerId: winner.id,
-              startTime: gameState.startTime,
-              endTime: gameState.endTime,
-            }),
-            gameMove: [],
-          },
+          gameHistory: new GameHistoryEntity({
+            roomId: room.id,
+            gameId: gameState.gameId,
+            player1Id: gameState.playerIds[0],
+            player2Id: gameState.playerIds[1],
+            winnerId: winner.id,
+            startTime: gameState.startTime,
+            endTime: gameState.endTime,
+          }),
+          gameMove: [],
         });
 
         return;

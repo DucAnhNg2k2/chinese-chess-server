@@ -30,6 +30,7 @@ import { MovePieceChessDto } from './dtos/move-piece-chess.dto';
 import { MovePieceGameCommand } from 'src/commands/game-manager/move-piece.command';
 import { GetValidMoveChessDto } from './dtos/get-valid-move.dto';
 import { GetValidMovesCommand } from 'src/commands/game-manager/get-valid-moves.command';
+import { SaveGameHistoryCommand } from 'src/commands/game-manager/save-game-history.command';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -73,6 +74,7 @@ export class GameManager
     private readonly roomManager: RoomGameManager,
     private readonly gameStateManager: GameStateManager,
     private readonly getUserProfileCommand: GetUserProfileCommand,
+    private readonly saveGameHistoryCommand: SaveGameHistoryCommand,
   ) {}
 
   onModuleInit() {
@@ -107,14 +109,7 @@ export class GameManager
       this.roomManager,
       this.gameStateManager,
       this.server,
-    );
-    this.leaveRoomCommand = new LeaveRoomCommand(
-      this.userToSocket,
-      this.socketToUser,
-      this.userManager,
-      this.roomManager,
-      this.gameStateManager,
-      this.server,
+      this.saveGameHistoryCommand,
     );
     this.playerCancelReadyGameCommand = new PlayerCancelReadyGameCommand(
       this.userToSocket,
@@ -131,6 +126,7 @@ export class GameManager
       this.roomManager,
       this.gameStateManager,
       this.server,
+      this.saveGameHistoryCommand,
     );
     this.getValidMovesCommand = new GetValidMovesCommand(
       this.userToSocket,
