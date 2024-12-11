@@ -21,6 +21,8 @@ export class GameHistoryService {
     const qb = this.gameHistoryRepository
       .createQueryBuilder('gameHistory')
       .leftJoinAndSelect('gameHistory.gameMoves', 'gameMoves')
+      .leftJoinAndSelect('gameHistory.player1', 'player1')
+      .leftJoinAndSelect('gameHistory.player2', 'player2')
       .andWhere('gameHistory.id = :id', { id });
 
     const data = await qb.getOne();
