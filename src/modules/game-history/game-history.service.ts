@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserReq } from 'src/commons/UserReq';
 import { GameHistoryEntity } from 'src/databases/game-history.entity';
+import { UserProfileEntity } from 'src/databases/user-profile.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -21,8 +22,18 @@ export class GameHistoryService {
     const qb = this.gameHistoryRepository
       .createQueryBuilder('gameHistory')
       .leftJoinAndSelect('gameHistory.gameMoves', 'gameMoves')
-      .leftJoinAndSelect('gameHistory.player1', 'player1')
-      .leftJoinAndSelect('gameHistory.player2', 'player2')
+      .leftJoinAndMapOne(
+        'gameMoves.player1',
+        UserProfileEntity,
+        'player1',
+        'player1.userId = gameMoves.player1Id',
+      )
+      .leftJoinAndMapOne(
+        'gameMoves.player2',
+        UserProfileEntity,
+        'player2',
+        'player2.userId = gameMoves.player2Id',
+      )
       .andWhere('gameHistory.id = :id', { id });
 
     const data = await qb.getOne();
