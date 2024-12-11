@@ -9,6 +9,7 @@ import { UserGameStatus } from 'src/game-manager/user/user.interface';
 import { UserGameManager } from 'src/game-manager/user/user.manager';
 import { CommandBase } from './../../commons/base/command.base';
 import { SocketToUser, UserToSocket } from './../../game-manager/game.manager';
+import { generateRandom6Digits } from 'src/commons/utils/random';
 
 export interface CreateRoomCommandPayload {
   client: Socket;
@@ -43,7 +44,7 @@ export class CreateRoomCommand
       return socketEmitError(client, 'user-đã-ở-trong-room');
     }
 
-    const roomId = randomUUID();
+    const roomId = generateRandom6Digits();
     const room = this.roomManager.createRoom({
       id: roomId,
       ownerId: userId,
