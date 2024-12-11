@@ -23,16 +23,16 @@ export class GameHistoryService {
       .createQueryBuilder('gameHistory')
       .leftJoinAndSelect('gameHistory.gameMoves', 'gameMoves')
       .leftJoinAndMapOne(
-        'gameMoves.player1',
+        'gameHistory.player1',
         UserProfileEntity,
         'player1',
-        'player1.userId = gameMoves.player1Id',
+        'player1.userId = gameHistory.player1Id',
       )
       .leftJoinAndMapOne(
-        'gameMoves.player2',
+        'gameHistory.player2',
         UserProfileEntity,
         'player2',
-        'player2.userId = gameMoves.player2Id',
+        'player2.userId = gameHistory.player2Id',
       )
       .andWhere('gameHistory.id = :id', { id });
 
