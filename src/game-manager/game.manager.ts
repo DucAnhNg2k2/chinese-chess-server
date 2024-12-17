@@ -31,6 +31,8 @@ import { MovePieceGameCommand } from 'src/commands/game-manager/move-piece.comma
 import { GetValidMoveChessDto } from './dtos/get-valid-move.dto';
 import { GetValidMovesCommand } from 'src/commands/game-manager/get-valid-moves.command';
 import { SaveGameHistoryCommand } from 'src/commands/game-manager/save-game-history.command';
+import { InviteRoomCommand } from 'src/commands/game-manager/invite-room.command';
+import { InviteRoomDto } from './dtos/invite-room.dto';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -66,6 +68,7 @@ export class GameManager
   private leaveRoomCommand: LeaveRoomCommand;
   private movePieceChessCommand: MovePieceGameCommand;
   private getValidMovesCommand: GetValidMovesCommand;
+  private inviteRoomCommand: InviteRoomCommand;
   private usersQueue: string[] = [];
 
   constructor(
@@ -129,6 +132,14 @@ export class GameManager
       this.saveGameHistoryCommand,
     );
     this.getValidMovesCommand = new GetValidMovesCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+    );
+    this.inviteRoomCommand = new InviteRoomCommand(
       this.userToSocket,
       this.socketToUser,
       this.userManager,
@@ -263,6 +274,17 @@ export class GameManager
   ) {
     // console.log('[GET_VALID_MOVES]', dto);
     return this.getValidMovesCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.INVITE_FRIEND)
+  async inviteFriends(
+    @MessageBody() dto: InviteRoomDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    return this.inviteRoomCommand.execute({
       dto,
       client,
     });
