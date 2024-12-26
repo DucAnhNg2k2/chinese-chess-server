@@ -1,10 +1,9 @@
-import { SaveGameHistoryDto } from 'src/game-manager/dtos/save-game-history.dto';
-import { CommandBase } from '../../commons/base/command.base';
-import { InjectRepository } from '@nestjs/typeorm';
-import { GameHistoryEntity } from 'src/databases/game-history.entity';
-import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
+import { GameHistoryEntity } from 'src/databases/game-history.entity';
 import { GameMoveEntity } from 'src/databases/game-move.entity';
+import { SaveGameHistoryDto } from 'src/game-manager/dtos/save-game-history.dto';
+import { DataSource } from 'typeorm';
+import { CommandBase } from '../../commons/base/command.base';
 
 export interface SaveGameHistoryCommandPayload {
   gameHistory: SaveGameHistoryDto['gameHistory'];

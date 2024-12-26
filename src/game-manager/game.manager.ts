@@ -33,6 +33,8 @@ import { GetValidMovesCommand } from 'src/commands/game-manager/get-valid-moves.
 import { SaveGameHistoryCommand } from 'src/commands/game-manager/save-game-history.command';
 import { InviteRoomCommand } from 'src/commands/game-manager/invite-room.command';
 import { InviteRoomDto } from './dtos/invite-room.dto';
+import { SurrenderGameCommand } from 'src/commands/game-manager/surrender.command';
+import { SurrenderGameDto } from './dtos/surrender.dto';
 
 export interface UserToSocket {
   [userId: string]: Socket;
@@ -69,6 +71,7 @@ export class GameManager
   private movePieceChessCommand: MovePieceGameCommand;
   private getValidMovesCommand: GetValidMovesCommand;
   private inviteRoomCommand: InviteRoomCommand;
+  private surrenderGameCommand: SurrenderGameCommand;
   private usersQueue: string[] = [];
 
   constructor(
@@ -146,6 +149,15 @@ export class GameManager
       this.roomManager,
       this.gameStateManager,
       this.server,
+    );
+    this.surrenderGameCommand = new SurrenderGameCommand(
+      this.userToSocket,
+      this.socketToUser,
+      this.userManager,
+      this.roomManager,
+      this.gameStateManager,
+      this.server,
+      this.saveGameHistoryCommand,
     );
   }
 
@@ -285,6 +297,17 @@ export class GameManager
     @ConnectedSocket() client: Socket,
   ) {
     return this.inviteRoomCommand.execute({
+      dto,
+      client,
+    });
+  }
+
+  @SubscribeMessage(GameEventServer.SURRENDER_GAME)
+  async surrenderGame(
+    @MessageBody() dto: SurrenderGameDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    return this.surrenderGameCommand.execute({
       dto,
       client,
     });
