@@ -10,6 +10,7 @@ export interface UpdateUserProfileCommandParams {
   fullName: string;
   address: string;
   phoneNumber: string;
+  avatar: string;
 }
 
 @Injectable()
@@ -33,6 +34,7 @@ export class UpdateUserProfileCommand
           fullName: dto.fullName,
           phoneNumber: dto.phoneNumber,
           userId: dto.user.id,
+          avatar: dto.avatar,
         }),
       );
     }
@@ -40,6 +42,7 @@ export class UpdateUserProfileCommand
     userProfile.fullName = dto.fullName;
     userProfile.address = dto.address;
     userProfile.phoneNumber = dto.phoneNumber;
+    userProfile.avatar = dto.avatar;
 
     return this.userProfileRepository.save(userProfile);
   }

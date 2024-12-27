@@ -12,4 +12,8 @@ export class UpdateUserProfileDto {
   @IsString()
   @IsNotEmpty()
   address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  avatar: string;
 }
