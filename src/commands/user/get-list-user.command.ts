@@ -25,7 +25,7 @@ export class GetListUserCommand
 
     if (dto.phoneNumber) {
       qb.andWhere('userProfile.phoneNumber like :phoneNumber', {
-        phoneNumber: dto.phoneNumber,
+        phoneNumber: `%${dto.phoneNumber}%`,
       });
     }
 
