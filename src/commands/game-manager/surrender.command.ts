@@ -58,6 +58,10 @@ export class SurrenderGameCommand
 
     const winner = this.userManager.getUserById(winnerId);
     const loser = this.userManager.getUserById(loserId);
+    winner.status = UserGameStatus.IN_ROOM;
+    loser.status = UserGameStatus.IN_ROOM;
+
+    room.status = RoomStatus.PENDING;
 
     // hết cờ. lưu lại history vào database. add vào queue
     // todo ... add to queue
