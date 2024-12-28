@@ -13,7 +13,12 @@ export class GameHistoryService {
   ) {}
 
   async list(user: UserReq) {
-    const qb = this.gameHistoryRepository.createQueryBuilder('gameHistory');
+    const qb = this.gameHistoryRepository
+      .createQueryBuilder('gameHistory')
+      .andWhere(
+        'gameHistory.player1Id = :userId OR gameHistory.player2Id = :userId',
+        { userId: user.id },
+      );
     const data = await qb.getMany();
     return data;
   }
